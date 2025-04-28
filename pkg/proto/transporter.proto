@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "transporter/";
+
+enum RelayType {
+  HEAVY = 0;
+  LIGHT = 1;
+}
+
+message Climate {
+  uint32 id = 1;
+  uint32 dht22_port = 2;
+  uint32 aqi_port = 3;
+  bool has_buzzer = 4;
+  uint32 buzzer_port = 5;
+}
+
+message Ldr {
+  uint32 id = 1;
+  uint32 port = 2;
+}
+
+message Motion {
+  uint32 id = 1;
+  uint32 port = 2;
+  uint32 relay_id = 3;
+  uint32 relay_channel = 4;
+}
+
+message Relay {
+  uint32 id = 1;
+  RelayType type = 2;
+}
+
+message ConfigData {
+  uint32 version = 1;
+  uint32 climate_size = 2;
+  uint32 ldr_size =3;
+  uint32 motion_size = 4;
+  uint32 relay_size = 5;
+
+  repeated Climate climates = 8; // Climate config array
+  repeated Ldr ldrs = 9; // LDR config array
+  repeated Motion motions = 10; // Motion sensor config array
+  repeated Relay relays = 11; // Relay config array
+}
+
+
+message ClimateSensorData{
+  uint32 id = 1;
+  int32 device_id = 2;
+  float temperature = 3;
+  float humidity = 4;
+  float aqi = 5;
+}
+
+message LdrSensorData{
+  uint32 id = 1;
+  int32 device_id = 2;
+  float ldr_value = 3;
+}
+
+message MotionSensorData{
+  uint32 id = 1;
+  int32 device_id = 2;
+  bool motion_detected = 3;
+}
+
+message RelayData{
+  uint32 id = 1;
+  int32 device_id = 2;
+  bool relay_status = 3;
+}
+
+message SensorData {
+  int32 device_id = 1;
+  oneof data {
+    ClimateSensorData climate = 3;
+    LdrSensorData ldr = 4;
+    MotionSensorData motion = 5;
+  }
+}
+
+message SecurityCommand{
+  optional string request_id = 1;
+  string device_id = 2;
+  bytes uid = 4;
+}
+
+message SecurityStatus {
+  bool status = 1;
+}
+
+message RegistrationCommand {
+  string device_id = 1;
+  string request_id = 2;
+}
+

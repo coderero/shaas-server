@@ -6,17 +6,21 @@ import (
 	"log/slog"
 	"os"
 
+	"coderero.dev/iot/smaas-server/internal/collections"
+	"coderero.dev/iot/smaas-server/internal/topics"
 	mqtt "github.com/mochi-mqtt/server/v2"
 	"github.com/mochi-mqtt/server/v2/hooks/auth"
 	"github.com/mochi-mqtt/server/v2/listeners"
 	"github.com/mochi-mqtt/server/v2/packets"
+	"github.com/pocketbase/pocketbase/core"
 )
 
 type MQTT struct {
-	server *mqtt.Server
+	server  *mqtt.Server
+	arduino *topics.Arduino
 }
 
-func NewMQTT(port int) *MQTT {
+func NewMQTT(port int, collections []collections.CollectionDefiner, app core.App) *MQTT {
 	server := mqtt.New(&mqtt.Options{
 		InlineClient: true,
 		Logger: slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
@@ -40,24 +44,20 @@ func NewMQTT(port int) *MQTT {
 	}
 
 	return &MQTT{
-		server: server,
+		server:  server,
+		arduino: topics.NewArduino("arduino", collections, app, server),
 	}
 }
 
 func (m *MQTT) Start() error {
-	errChan := make(chan error)
-	go func() {
-		err := m.server.Serve()
-		if err != nil {
-			errChan <- err
-		}
-	}()
-
-	return <-errChan
+	if err := m.server.Serve(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (m *MQTT) RegisterTopics() {
-	m.server.Subscribe("arduino/+/+", 0, func(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
-		log.Printf("Received message on topic %s: %s", sub.ShareName[0], pk.Payload)
+	m.server.Subscribe("device/#", 0, func(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
+		log.Printf("Received message on topic %s: %s", pk.TopicName, pk.Payload)
 	})
 }
