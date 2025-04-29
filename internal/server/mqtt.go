@@ -11,7 +11,6 @@ import (
 	mqtt "github.com/mochi-mqtt/server/v2"
 	"github.com/mochi-mqtt/server/v2/hooks/auth"
 	"github.com/mochi-mqtt/server/v2/listeners"
-	"github.com/mochi-mqtt/server/v2/packets"
 	"github.com/pocketbase/pocketbase/core"
 )
 
@@ -45,7 +44,7 @@ func NewMQTT(port int, collections []collections.CollectionDefiner, app core.App
 
 	return &MQTT{
 		server:  server,
-		arduino: topics.NewArduino("arduino", collections, app, server),
+		arduino: topics.NewArduino(collections, app, server),
 	}
 }
 
@@ -57,7 +56,5 @@ func (m *MQTT) Start() error {
 }
 
 func (m *MQTT) RegisterTopics() {
-	m.server.Subscribe("device/#", 0, func(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
-		log.Printf("Received message on topic %s: %s", pk.TopicName, pk.Payload)
-	})
+	m.arduino.RegisterTopics()
 }

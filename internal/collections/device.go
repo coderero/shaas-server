@@ -6,12 +6,13 @@ import (
 )
 
 const (
-	DevicesCollectionName    = "devices"
-	ClimateCollectionName    = "climate"
-	LDRCollectionName        = "ldr"
-	MotionCollectionName     = "motion"
-	RelayCollectionName      = "relay"
-	RelayPortsCollectionName = "user_port_lables"
+	DevicesCollectionName         = "devices"
+	WifiCredentialsCollectionName = "wifi_credentials"
+	ClimateCollectionName         = "climate"
+	LDRCollectionName             = "ldr"
+	MotionCollectionName          = "motion"
+	RelayCollectionName           = "relay"
+	UserPortLablesCollectionName  = "user_port_lables"
 )
 
 type Devices struct {
@@ -54,6 +55,56 @@ func (*Devices) Schema() *core.Collection {
 		},
 		&core.TextField{
 			Name:     "device_status",
+			Required: true,
+		},
+		&core.AutodateField{
+			Name:     "timestamp",
+			OnCreate: true,
+		},
+	)
+
+	return collection
+}
+
+type WifiCredentials struct {
+	ID        string `json:"id"`
+	Device    string `json:"device"`
+	SSID      string `json:"ssid"`
+	Password  string `json:"password"`
+	Timestamp string `json:"timestamp"`
+}
+
+func (*WifiCredentials) Name() string {
+	return WifiCredentialsCollectionName
+}
+
+func (*WifiCredentials) Schema() *core.Collection {
+	collection := core.NewBaseCollection(WifiCredentialsCollectionName, WifiCredentialsCollectionName)
+	collection.ListRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
+	collection.ViewRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
+	collection.CreateRule = types.Pointer("@request.auth.id != '' && @request.body.user = @request.auth.id")
+	collection.UpdateRule = types.Pointer(`
+		@request.auth.id != '' &&
+		@request.auth.id = device.user &&
+		(@request.body.user:isset = false || @request.body.user = @request.auth.id)
+	`)
+	collection.DeleteRule = types.Pointer(`@request.auth.id != '' && @request.auth.id = device.user.id`)
+
+	collection.Fields.Add(
+		&core.RelationField{
+			CollectionId:  DevicesCollectionName,
+			Name:          "device",
+			CascadeDelete: true,
+			Required:      true,
+			MinSelect:     1,
+			MaxSelect:     1,
+		},
+		&core.TextField{
+			Name:     "ssid",
+			Required: true,
+		},
+		&core.TextField{
+			Name:     "password",
 			Required: true,
 		},
 	)
@@ -175,58 +226,6 @@ func (*LDR) Schema() *core.Collection {
 	return collection
 }
 
-type Motion struct {
-	ID          string `json:"id"`
-	SensorID    int    `json:"sensor_id"`
-	Device      string `json:"device"`
-	MotionValue bool   `json:"motion_value"`
-	Timestamp   string `json:"timestamp"`
-}
-
-func (*Motion) Name() string {
-	return MotionCollectionName
-}
-
-func (*Motion) Schema() *core.Collection {
-	collection := core.NewBaseCollection(MotionCollectionName, MotionCollectionName)
-	collection.ListRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
-	collection.ViewRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
-	collection.CreateRule = types.Pointer("@request.auth.id != '' && @request.body.user = @request.auth.id")
-	collection.UpdateRule = types.Pointer(`
-        @request.auth.id != '' &&
-		@request.auth.id = device.user &&
-		(@request.body.user:isset = false || @request.body.user = @request.auth.id)
-    `)
-	collection.DeleteRule = types.Pointer(`@request.auth.id != '' && @request.auth.id = device.user.id`)
-
-	collection.Fields.Add(
-		&core.RelationField{
-			CollectionId:  DevicesCollectionName,
-			Name:          "device",
-			CascadeDelete: true,
-			Required:      true,
-			MinSelect:     1,
-			MaxSelect:     1,
-		},
-		&core.NumberField{
-			Name:     "sensor_id",
-			Required: true,
-			OnlyInt:  true,
-			System:   true,
-		},
-		&core.BoolField{
-			Name:     "motion_value",
-			Required: true,
-		},
-		&core.AutodateField{
-			Name:     "timestamp",
-			OnCreate: true,
-		},
-	)
-
-	return collection
-}
-
 type Relay struct {
 	ID       string `json:"id"`
 	Type     int    `json:"type"`
@@ -246,7 +245,7 @@ func (*Relay) Schema() *core.Collection {
 	collection.DeleteRule = types.Pointer("@request.auth.isAdmin = true")
 
 	collection.Fields.Add(
-		&core.BoolField{
+		&core.NumberField{
 			Name:     "type",
 			Required: true,
 		},
@@ -269,17 +268,18 @@ type UserPortLables struct {
 	ID        string `json:"id"`
 	Device    string `json:"device"`
 	Relay     string `json:"relay"`
-	State     int    `json:"state"`
+	Port      int    `json:"port"`
+	State     bool   `json:"state"`
 	Lable     string `json:"lable"`
 	Timestamp string `json:"timestamp"`
 }
 
 func (*UserPortLables) Name() string {
-	return RelayPortsCollectionName
+	return UserPortLablesCollectionName
 }
 
 func (*UserPortLables) Schema() *core.Collection {
-	collection := core.NewBaseCollection(RelayPortsCollectionName, RelayPortsCollectionName)
+	collection := core.NewBaseCollection(UserPortLablesCollectionName, UserPortLablesCollectionName)
 	collection.ListRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
 	collection.ViewRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
 	collection.CreateRule = types.Pointer("@request.auth.isAdmin = true")
@@ -301,13 +301,16 @@ func (*UserPortLables) Schema() *core.Collection {
 			CascadeDelete: true,
 			Required:      true,
 			MinSelect:     1,
-			MaxSelect:     6,
+			MaxSelect:     1,
+		},
+		&core.BoolField{
+			Name:   "state",
+			System: true,
 		},
 		&core.NumberField{
-			Name:     "state",
+			Name:     "port",
 			Required: true,
 			OnlyInt:  true,
-			System:   true,
 		},
 		&core.TextField{
 			Name:     "lable",

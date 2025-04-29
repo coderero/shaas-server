@@ -23,19 +23,22 @@ const (
 type RelayType int32
 
 const (
-	RelayType_HEAVY RelayType = 0
-	RelayType_LIGHT RelayType = 1
+	RelayType_UNKNOWN    RelayType = 0
+	RelayType_LOW_DUTY   RelayType = 1
+	RelayType_HEAVY_DUTY RelayType = 2
 )
 
 // Enum value maps for RelayType.
 var (
 	RelayType_name = map[int32]string{
-		0: "HEAVY",
-		1: "LIGHT",
+		0: "UNKNOWN",
+		1: "LOW_DUTY",
+		2: "HEAVY_DUTY",
 	}
 	RelayType_value = map[string]int32{
-		"HEAVY": 0,
-		"LIGHT": 1,
+		"UNKNOWN":    0,
+		"LOW_DUTY":   1,
+		"HEAVY_DUTY": 2,
 	}
 )
 
@@ -66,6 +69,398 @@ func (RelayType) EnumDescriptor() ([]byte, []int) {
 	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{0}
 }
 
+type RelayStateType int32
+
+const (
+	RelayStateType_OFF RelayStateType = 0
+	RelayStateType_ON  RelayStateType = 1
+)
+
+// Enum value maps for RelayStateType.
+var (
+	RelayStateType_name = map[int32]string{
+		0: "OFF",
+		1: "ON",
+	}
+	RelayStateType_value = map[string]int32{
+		"OFF": 0,
+		"ON":  1,
+	}
+)
+
+func (x RelayStateType) Enum() *RelayStateType {
+	p := new(RelayStateType)
+	*p = x
+	return p
+}
+
+func (x RelayStateType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RelayStateType) Descriptor() protoreflect.EnumDescriptor {
+	return file_pkg_proto_transporter_proto_enumTypes[1].Descriptor()
+}
+
+func (RelayStateType) Type() protoreflect.EnumType {
+	return &file_pkg_proto_transporter_proto_enumTypes[1]
+}
+
+func (x RelayStateType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RelayStateType.Descriptor instead.
+func (RelayStateType) EnumDescriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{1}
+}
+
+type WifiCredentials struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Ssid     string `protobuf:"bytes,1,opt,name=ssid,proto3" json:"ssid,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+}
+
+func (x *WifiCredentials) Reset() {
+	*x = WifiCredentials{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *WifiCredentials) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WifiCredentials) ProtoMessage() {}
+
+func (x *WifiCredentials) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WifiCredentials.ProtoReflect.Descriptor instead.
+func (*WifiCredentials) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *WifiCredentials) GetSsid() string {
+	if x != nil {
+		return x.Ssid
+	}
+	return ""
+}
+
+func (x *WifiCredentials) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type UID struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value []byte `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *UID) Reset() {
+	*x = UID{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UID) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UID) ProtoMessage() {}
+
+func (x *UID) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UID.ProtoReflect.Descriptor instead.
+func (*UID) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *UID) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type RegisterRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *RegisterRequest) Reset() {
+	*x = RegisterRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RegisterRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegisterRequest) ProtoMessage() {}
+
+func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
+func (*RegisterRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *RegisterRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type RegisterResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id  string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Uid *UID   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
+}
+
+func (x *RegisterResponse) Reset() {
+	*x = RegisterResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RegisterResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegisterResponse) ProtoMessage() {}
+
+func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegisterResponse.ProtoReflect.Descriptor instead.
+func (*RegisterResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *RegisterResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *RegisterResponse) GetUid() *UID {
+	if x != nil {
+		return x.Uid
+	}
+	return nil
+}
+
+type RevokeRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Uid *UID `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+}
+
+func (x *RevokeRequest) Reset() {
+	*x = RevokeRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RevokeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeRequest) ProtoMessage() {}
+
+func (x *RevokeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeRequest.ProtoReflect.Descriptor instead.
+func (*RevokeRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *RevokeRequest) GetUid() *UID {
+	if x != nil {
+		return x.Uid
+	}
+	return nil
+}
+
+type RfidEnvelope struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Types that are assignable to Payload:
+	//
+	//	*RfidEnvelope_RegisterRequest
+	//	*RfidEnvelope_RegisterResponse
+	//	*RfidEnvelope_RevokeRequest
+	Payload isRfidEnvelope_Payload `protobuf_oneof:"payload"`
+}
+
+func (x *RfidEnvelope) Reset() {
+	*x = RfidEnvelope{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RfidEnvelope) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RfidEnvelope) ProtoMessage() {}
+
+func (x *RfidEnvelope) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RfidEnvelope.ProtoReflect.Descriptor instead.
+func (*RfidEnvelope) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{5}
+}
+
+func (m *RfidEnvelope) GetPayload() isRfidEnvelope_Payload {
+	if m != nil {
+		return m.Payload
+	}
+	return nil
+}
+
+func (x *RfidEnvelope) GetRegisterRequest() *RegisterRequest {
+	if x, ok := x.GetPayload().(*RfidEnvelope_RegisterRequest); ok {
+		return x.RegisterRequest
+	}
+	return nil
+}
+
+func (x *RfidEnvelope) GetRegisterResponse() *RegisterResponse {
+	if x, ok := x.GetPayload().(*RfidEnvelope_RegisterResponse); ok {
+		return x.RegisterResponse
+	}
+	return nil
+}
+
+func (x *RfidEnvelope) GetRevokeRequest() *RevokeRequest {
+	if x, ok := x.GetPayload().(*RfidEnvelope_RevokeRequest); ok {
+		return x.RevokeRequest
+	}
+	return nil
+}
+
+type isRfidEnvelope_Payload interface {
+	isRfidEnvelope_Payload()
+}
+
+type RfidEnvelope_RegisterRequest struct {
+	RegisterRequest *RegisterRequest `protobuf:"bytes,3,opt,name=register_request,json=registerRequest,proto3,oneof"`
+}
+
+type RfidEnvelope_RegisterResponse struct {
+	RegisterResponse *RegisterResponse `protobuf:"bytes,4,opt,name=register_response,json=registerResponse,proto3,oneof"`
+}
+
+type RfidEnvelope_RevokeRequest struct {
+	RevokeRequest *RevokeRequest `protobuf:"bytes,5,opt,name=revoke_request,json=revokeRequest,proto3,oneof"`
+}
+
+func (*RfidEnvelope_RegisterRequest) isRfidEnvelope_Payload() {}
+
+func (*RfidEnvelope_RegisterResponse) isRfidEnvelope_Payload() {}
+
+func (*RfidEnvelope_RevokeRequest) isRfidEnvelope_Payload() {}
+
 type Climate struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -74,14 +469,14 @@ type Climate struct {
 	Id         uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Dht22Port  uint32 `protobuf:"varint,2,opt,name=dht22_port,json=dht22Port,proto3" json:"dht22_port,omitempty"`
 	AqiPort    uint32 `protobuf:"varint,3,opt,name=aqi_port,json=aqiPort,proto3" json:"aqi_port,omitempty"`
-	HasBuzzer  bool   `protobuf:"varint,4,opt,name=has_buzzer,json=hasBuzzer,proto3" json:"has_buzzer,omitempty"`
+	HasBuzzers bool   `protobuf:"varint,4,opt,name=has_buzzers,json=hasBuzzers,proto3" json:"has_buzzers,omitempty"`
 	BuzzerPort uint32 `protobuf:"varint,5,opt,name=buzzer_port,json=buzzerPort,proto3" json:"buzzer_port,omitempty"`
 }
 
 func (x *Climate) Reset() {
 	*x = Climate{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_proto_transporter_proto_msgTypes[0]
+		mi := &file_pkg_proto_transporter_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -94,7 +489,7 @@ func (x *Climate) String() string {
 func (*Climate) ProtoMessage() {}
 
 func (x *Climate) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_proto_transporter_proto_msgTypes[0]
+	mi := &file_pkg_proto_transporter_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -107,7 +502,7 @@ func (x *Climate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Climate.ProtoReflect.Descriptor instead.
 func (*Climate) Descriptor() ([]byte, []int) {
-	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{0}
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Climate) GetId() uint32 {
@@ -131,9 +526,9 @@ func (x *Climate) GetAqiPort() uint32 {
 	return 0
 }
 
-func (x *Climate) GetHasBuzzer() bool {
+func (x *Climate) GetHasBuzzers() bool {
 	if x != nil {
-		return x.HasBuzzer
+		return x.HasBuzzers
 	}
 	return false
 }
@@ -145,7 +540,7 @@ func (x *Climate) GetBuzzerPort() uint32 {
 	return 0
 }
 
-type Ldr struct {
+type LDR struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -154,23 +549,23 @@ type Ldr struct {
 	Port uint32 `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
 }
 
-func (x *Ldr) Reset() {
-	*x = Ldr{}
+func (x *LDR) Reset() {
+	*x = LDR{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_proto_transporter_proto_msgTypes[1]
+		mi := &file_pkg_proto_transporter_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Ldr) String() string {
+func (x *LDR) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Ldr) ProtoMessage() {}
+func (*LDR) ProtoMessage() {}
 
-func (x *Ldr) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_proto_transporter_proto_msgTypes[1]
+func (x *LDR) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -181,19 +576,19 @@ func (x *Ldr) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Ldr.ProtoReflect.Descriptor instead.
-func (*Ldr) Descriptor() ([]byte, []int) {
-	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{1}
+// Deprecated: Use LDR.ProtoReflect.Descriptor instead.
+func (*LDR) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *Ldr) GetId() uint32 {
+func (x *LDR) GetId() uint32 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *Ldr) GetPort() uint32 {
+func (x *LDR) GetPort() uint32 {
 	if x != nil {
 		return x.Port
 	}
@@ -205,16 +600,16 @@ type Motion struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id           uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Port         uint32 `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
-	RelayId      uint32 `protobuf:"varint,3,opt,name=relay_id,json=relayId,proto3" json:"relay_id,omitempty"`
-	RelayChannel uint32 `protobuf:"varint,4,opt,name=relay_channel,json=relayChannel,proto3" json:"relay_channel,omitempty"`
+	Id        uint32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Port      uint32    `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
+	RelayPort uint32    `protobuf:"varint,3,opt,name=relay_port,json=relayPort,proto3" json:"relay_port,omitempty"`
+	RelayType RelayType `protobuf:"varint,4,opt,name=relay_type,json=relayType,proto3,enum=proto.RelayType" json:"relay_type,omitempty"`
 }
 
 func (x *Motion) Reset() {
 	*x = Motion{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_proto_transporter_proto_msgTypes[2]
+		mi := &file_pkg_proto_transporter_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -227,7 +622,7 @@ func (x *Motion) String() string {
 func (*Motion) ProtoMessage() {}
 
 func (x *Motion) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_proto_transporter_proto_msgTypes[2]
+	mi := &file_pkg_proto_transporter_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -240,7 +635,7 @@ func (x *Motion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Motion.ProtoReflect.Descriptor instead.
 func (*Motion) Descriptor() ([]byte, []int) {
-	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{2}
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Motion) GetId() uint32 {
@@ -257,470 +652,32 @@ func (x *Motion) GetPort() uint32 {
 	return 0
 }
 
-func (x *Motion) GetRelayId() uint32 {
+func (x *Motion) GetRelayPort() uint32 {
 	if x != nil {
-		return x.RelayId
+		return x.RelayPort
 	}
 	return 0
 }
 
-func (x *Motion) GetRelayChannel() uint32 {
+func (x *Motion) GetRelayType() RelayType {
 	if x != nil {
-		return x.RelayChannel
+		return x.RelayType
 	}
-	return 0
+	return RelayType_UNKNOWN
 }
 
-type Relay struct {
+type FullConfig struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id   uint32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type RelayType `protobuf:"varint,2,opt,name=type,proto3,enum=proto.RelayType" json:"type,omitempty"`
+	Climates []*Climate `protobuf:"bytes,1,rep,name=climates,proto3" json:"climates,omitempty"`
+	Ldrs     []*LDR     `protobuf:"bytes,2,rep,name=ldrs,proto3" json:"ldrs,omitempty"`
+	Motions  []*Motion  `protobuf:"bytes,3,rep,name=motions,proto3" json:"motions,omitempty"`
 }
 
-func (x *Relay) Reset() {
-	*x = Relay{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_proto_transporter_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Relay) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Relay) ProtoMessage() {}
-
-func (x *Relay) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_proto_transporter_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Relay.ProtoReflect.Descriptor instead.
-func (*Relay) Descriptor() ([]byte, []int) {
-	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *Relay) GetId() uint32 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *Relay) GetType() RelayType {
-	if x != nil {
-		return x.Type
-	}
-	return RelayType_HEAVY
-}
-
-type ConfigData struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Version     uint32     `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
-	ClimateSize uint32     `protobuf:"varint,2,opt,name=climate_size,json=climateSize,proto3" json:"climate_size,omitempty"`
-	LdrSize     uint32     `protobuf:"varint,3,opt,name=ldr_size,json=ldrSize,proto3" json:"ldr_size,omitempty"`
-	MotionSize  uint32     `protobuf:"varint,4,opt,name=motion_size,json=motionSize,proto3" json:"motion_size,omitempty"`
-	RelaySize   uint32     `protobuf:"varint,5,opt,name=relay_size,json=relaySize,proto3" json:"relay_size,omitempty"`
-	Climates    []*Climate `protobuf:"bytes,8,rep,name=climates,proto3" json:"climates,omitempty"` // Climate config array
-	Ldrs        []*Ldr     `protobuf:"bytes,9,rep,name=ldrs,proto3" json:"ldrs,omitempty"`         // LDR config array
-	Motions     []*Motion  `protobuf:"bytes,10,rep,name=motions,proto3" json:"motions,omitempty"`  // Motion sensor config array
-	Relays      []*Relay   `protobuf:"bytes,11,rep,name=relays,proto3" json:"relays,omitempty"`    // Relay config array
-}
-
-func (x *ConfigData) Reset() {
-	*x = ConfigData{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_proto_transporter_proto_msgTypes[4]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *ConfigData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ConfigData) ProtoMessage() {}
-
-func (x *ConfigData) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_proto_transporter_proto_msgTypes[4]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ConfigData.ProtoReflect.Descriptor instead.
-func (*ConfigData) Descriptor() ([]byte, []int) {
-	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *ConfigData) GetVersion() uint32 {
-	if x != nil {
-		return x.Version
-	}
-	return 0
-}
-
-func (x *ConfigData) GetClimateSize() uint32 {
-	if x != nil {
-		return x.ClimateSize
-	}
-	return 0
-}
-
-func (x *ConfigData) GetLdrSize() uint32 {
-	if x != nil {
-		return x.LdrSize
-	}
-	return 0
-}
-
-func (x *ConfigData) GetMotionSize() uint32 {
-	if x != nil {
-		return x.MotionSize
-	}
-	return 0
-}
-
-func (x *ConfigData) GetRelaySize() uint32 {
-	if x != nil {
-		return x.RelaySize
-	}
-	return 0
-}
-
-func (x *ConfigData) GetClimates() []*Climate {
-	if x != nil {
-		return x.Climates
-	}
-	return nil
-}
-
-func (x *ConfigData) GetLdrs() []*Ldr {
-	if x != nil {
-		return x.Ldrs
-	}
-	return nil
-}
-
-func (x *ConfigData) GetMotions() []*Motion {
-	if x != nil {
-		return x.Motions
-	}
-	return nil
-}
-
-func (x *ConfigData) GetRelays() []*Relay {
-	if x != nil {
-		return x.Relays
-	}
-	return nil
-}
-
-type ClimateSensorData struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id          uint32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DeviceId    int32   `protobuf:"varint,2,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	Temperature float32 `protobuf:"fixed32,3,opt,name=temperature,proto3" json:"temperature,omitempty"`
-	Humidity    float32 `protobuf:"fixed32,4,opt,name=humidity,proto3" json:"humidity,omitempty"`
-	Aqi         float32 `protobuf:"fixed32,5,opt,name=aqi,proto3" json:"aqi,omitempty"`
-}
-
-func (x *ClimateSensorData) Reset() {
-	*x = ClimateSensorData{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_proto_transporter_proto_msgTypes[5]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *ClimateSensorData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ClimateSensorData) ProtoMessage() {}
-
-func (x *ClimateSensorData) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_proto_transporter_proto_msgTypes[5]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ClimateSensorData.ProtoReflect.Descriptor instead.
-func (*ClimateSensorData) Descriptor() ([]byte, []int) {
-	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *ClimateSensorData) GetId() uint32 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *ClimateSensorData) GetDeviceId() int32 {
-	if x != nil {
-		return x.DeviceId
-	}
-	return 0
-}
-
-func (x *ClimateSensorData) GetTemperature() float32 {
-	if x != nil {
-		return x.Temperature
-	}
-	return 0
-}
-
-func (x *ClimateSensorData) GetHumidity() float32 {
-	if x != nil {
-		return x.Humidity
-	}
-	return 0
-}
-
-func (x *ClimateSensorData) GetAqi() float32 {
-	if x != nil {
-		return x.Aqi
-	}
-	return 0
-}
-
-type LdrSensorData struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id       uint32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DeviceId int32   `protobuf:"varint,2,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	LdrValue float32 `protobuf:"fixed32,3,opt,name=ldr_value,json=ldrValue,proto3" json:"ldr_value,omitempty"`
-}
-
-func (x *LdrSensorData) Reset() {
-	*x = LdrSensorData{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_proto_transporter_proto_msgTypes[6]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *LdrSensorData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*LdrSensorData) ProtoMessage() {}
-
-func (x *LdrSensorData) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_proto_transporter_proto_msgTypes[6]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use LdrSensorData.ProtoReflect.Descriptor instead.
-func (*LdrSensorData) Descriptor() ([]byte, []int) {
-	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *LdrSensorData) GetId() uint32 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *LdrSensorData) GetDeviceId() int32 {
-	if x != nil {
-		return x.DeviceId
-	}
-	return 0
-}
-
-func (x *LdrSensorData) GetLdrValue() float32 {
-	if x != nil {
-		return x.LdrValue
-	}
-	return 0
-}
-
-type MotionSensorData struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id             uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DeviceId       int32  `protobuf:"varint,2,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	MotionDetected bool   `protobuf:"varint,3,opt,name=motion_detected,json=motionDetected,proto3" json:"motion_detected,omitempty"`
-}
-
-func (x *MotionSensorData) Reset() {
-	*x = MotionSensorData{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_proto_transporter_proto_msgTypes[7]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *MotionSensorData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*MotionSensorData) ProtoMessage() {}
-
-func (x *MotionSensorData) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_proto_transporter_proto_msgTypes[7]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use MotionSensorData.ProtoReflect.Descriptor instead.
-func (*MotionSensorData) Descriptor() ([]byte, []int) {
-	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *MotionSensorData) GetId() uint32 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *MotionSensorData) GetDeviceId() int32 {
-	if x != nil {
-		return x.DeviceId
-	}
-	return 0
-}
-
-func (x *MotionSensorData) GetMotionDetected() bool {
-	if x != nil {
-		return x.MotionDetected
-	}
-	return false
-}
-
-type RelayData struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id          uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DeviceId    int32  `protobuf:"varint,2,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	RelayStatus bool   `protobuf:"varint,3,opt,name=relay_status,json=relayStatus,proto3" json:"relay_status,omitempty"`
-}
-
-func (x *RelayData) Reset() {
-	*x = RelayData{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_proto_transporter_proto_msgTypes[8]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *RelayData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RelayData) ProtoMessage() {}
-
-func (x *RelayData) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_proto_transporter_proto_msgTypes[8]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RelayData.ProtoReflect.Descriptor instead.
-func (*RelayData) Descriptor() ([]byte, []int) {
-	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *RelayData) GetId() uint32 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *RelayData) GetDeviceId() int32 {
-	if x != nil {
-		return x.DeviceId
-	}
-	return 0
-}
-
-func (x *RelayData) GetRelayStatus() bool {
-	if x != nil {
-		return x.RelayStatus
-	}
-	return false
-}
-
-type SensorData struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	DeviceId int32 `protobuf:"varint,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	// Types that are assignable to Data:
-	//
-	//	*SensorData_Climate
-	//	*SensorData_Ldr
-	//	*SensorData_Motion
-	Data isSensorData_Data `protobuf_oneof:"data"`
-}
-
-func (x *SensorData) Reset() {
-	*x = SensorData{}
+func (x *FullConfig) Reset() {
+	*x = FullConfig{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_pkg_proto_transporter_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -728,13 +685,13 @@ func (x *SensorData) Reset() {
 	}
 }
 
-func (x *SensorData) String() string {
+func (x *FullConfig) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SensorData) ProtoMessage() {}
+func (*FullConfig) ProtoMessage() {}
 
-func (x *SensorData) ProtoReflect() protoreflect.Message {
+func (x *FullConfig) ProtoReflect() protoreflect.Message {
 	mi := &file_pkg_proto_transporter_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -746,80 +703,48 @@ func (x *SensorData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SensorData.ProtoReflect.Descriptor instead.
-func (*SensorData) Descriptor() ([]byte, []int) {
+// Deprecated: Use FullConfig.ProtoReflect.Descriptor instead.
+func (*FullConfig) Descriptor() ([]byte, []int) {
 	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *SensorData) GetDeviceId() int32 {
+func (x *FullConfig) GetClimates() []*Climate {
 	if x != nil {
-		return x.DeviceId
-	}
-	return 0
-}
-
-func (m *SensorData) GetData() isSensorData_Data {
-	if m != nil {
-		return m.Data
+		return x.Climates
 	}
 	return nil
 }
 
-func (x *SensorData) GetClimate() *ClimateSensorData {
-	if x, ok := x.GetData().(*SensorData_Climate); ok {
-		return x.Climate
+func (x *FullConfig) GetLdrs() []*LDR {
+	if x != nil {
+		return x.Ldrs
 	}
 	return nil
 }
 
-func (x *SensorData) GetLdr() *LdrSensorData {
-	if x, ok := x.GetData().(*SensorData_Ldr); ok {
-		return x.Ldr
+func (x *FullConfig) GetMotions() []*Motion {
+	if x != nil {
+		return x.Motions
 	}
 	return nil
 }
 
-func (x *SensorData) GetMotion() *MotionSensorData {
-	if x, ok := x.GetData().(*SensorData_Motion); ok {
-		return x.Motion
-	}
-	return nil
-}
-
-type isSensorData_Data interface {
-	isSensorData_Data()
-}
-
-type SensorData_Climate struct {
-	Climate *ClimateSensorData `protobuf:"bytes,3,opt,name=climate,proto3,oneof"`
-}
-
-type SensorData_Ldr struct {
-	Ldr *LdrSensorData `protobuf:"bytes,4,opt,name=ldr,proto3,oneof"`
-}
-
-type SensorData_Motion struct {
-	Motion *MotionSensorData `protobuf:"bytes,5,opt,name=motion,proto3,oneof"`
-}
-
-func (*SensorData_Climate) isSensorData_Data() {}
-
-func (*SensorData_Ldr) isSensorData_Data() {}
-
-func (*SensorData_Motion) isSensorData_Data() {}
-
-type SecurityCommand struct {
+type ConfigTopic struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	RequestId *string `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3,oneof" json:"request_id,omitempty"`
-	DeviceId  string  `protobuf:"bytes,2,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	Uid       []byte  `protobuf:"bytes,4,opt,name=uid,proto3" json:"uid,omitempty"`
+	// Types that are assignable to Payload:
+	//
+	//	*ConfigTopic_Climate
+	//	*ConfigTopic_Ldr
+	//	*ConfigTopic_Motion
+	//	*ConfigTopic_FullConfig
+	Payload isConfigTopic_Payload `protobuf_oneof:"payload"`
 }
 
-func (x *SecurityCommand) Reset() {
-	*x = SecurityCommand{}
+func (x *ConfigTopic) Reset() {
+	*x = ConfigTopic{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_pkg_proto_transporter_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -827,13 +752,13 @@ func (x *SecurityCommand) Reset() {
 	}
 }
 
-func (x *SecurityCommand) String() string {
+func (x *ConfigTopic) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SecurityCommand) ProtoMessage() {}
+func (*ConfigTopic) ProtoMessage() {}
 
-func (x *SecurityCommand) ProtoReflect() protoreflect.Message {
+func (x *ConfigTopic) ProtoReflect() protoreflect.Message {
 	mi := &file_pkg_proto_transporter_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -845,42 +770,84 @@ func (x *SecurityCommand) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SecurityCommand.ProtoReflect.Descriptor instead.
-func (*SecurityCommand) Descriptor() ([]byte, []int) {
+// Deprecated: Use ConfigTopic.ProtoReflect.Descriptor instead.
+func (*ConfigTopic) Descriptor() ([]byte, []int) {
 	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *SecurityCommand) GetRequestId() string {
-	if x != nil && x.RequestId != nil {
-		return *x.RequestId
-	}
-	return ""
-}
-
-func (x *SecurityCommand) GetDeviceId() string {
-	if x != nil {
-		return x.DeviceId
-	}
-	return ""
-}
-
-func (x *SecurityCommand) GetUid() []byte {
-	if x != nil {
-		return x.Uid
+func (m *ConfigTopic) GetPayload() isConfigTopic_Payload {
+	if m != nil {
+		return m.Payload
 	}
 	return nil
 }
 
-type SecurityStatus struct {
+func (x *ConfigTopic) GetClimate() *Climate {
+	if x, ok := x.GetPayload().(*ConfigTopic_Climate); ok {
+		return x.Climate
+	}
+	return nil
+}
+
+func (x *ConfigTopic) GetLdr() *LDR {
+	if x, ok := x.GetPayload().(*ConfigTopic_Ldr); ok {
+		return x.Ldr
+	}
+	return nil
+}
+
+func (x *ConfigTopic) GetMotion() *Motion {
+	if x, ok := x.GetPayload().(*ConfigTopic_Motion); ok {
+		return x.Motion
+	}
+	return nil
+}
+
+func (x *ConfigTopic) GetFullConfig() *FullConfig {
+	if x, ok := x.GetPayload().(*ConfigTopic_FullConfig); ok {
+		return x.FullConfig
+	}
+	return nil
+}
+
+type isConfigTopic_Payload interface {
+	isConfigTopic_Payload()
+}
+
+type ConfigTopic_Climate struct {
+	Climate *Climate `protobuf:"bytes,2,opt,name=climate,proto3,oneof"`
+}
+
+type ConfigTopic_Ldr struct {
+	Ldr *LDR `protobuf:"bytes,3,opt,name=ldr,proto3,oneof"`
+}
+
+type ConfigTopic_Motion struct {
+	Motion *Motion `protobuf:"bytes,4,opt,name=motion,proto3,oneof"`
+}
+
+type ConfigTopic_FullConfig struct {
+	FullConfig *FullConfig `protobuf:"bytes,6,opt,name=full_config,json=fullConfig,proto3,oneof"`
+}
+
+func (*ConfigTopic_Climate) isConfigTopic_Payload() {}
+
+func (*ConfigTopic_Ldr) isConfigTopic_Payload() {}
+
+func (*ConfigTopic_Motion) isConfigTopic_Payload() {}
+
+func (*ConfigTopic_FullConfig) isConfigTopic_Payload() {}
+
+type ClimateRemoval struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Status bool `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
-func (x *SecurityStatus) Reset() {
-	*x = SecurityStatus{}
+func (x *ClimateRemoval) Reset() {
+	*x = ClimateRemoval{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_pkg_proto_transporter_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -888,13 +855,13 @@ func (x *SecurityStatus) Reset() {
 	}
 }
 
-func (x *SecurityStatus) String() string {
+func (x *ClimateRemoval) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SecurityStatus) ProtoMessage() {}
+func (*ClimateRemoval) ProtoMessage() {}
 
-func (x *SecurityStatus) ProtoReflect() protoreflect.Message {
+func (x *ClimateRemoval) ProtoReflect() protoreflect.Message {
 	mi := &file_pkg_proto_transporter_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -906,29 +873,28 @@ func (x *SecurityStatus) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SecurityStatus.ProtoReflect.Descriptor instead.
-func (*SecurityStatus) Descriptor() ([]byte, []int) {
+// Deprecated: Use ClimateRemoval.ProtoReflect.Descriptor instead.
+func (*ClimateRemoval) Descriptor() ([]byte, []int) {
 	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *SecurityStatus) GetStatus() bool {
+func (x *ClimateRemoval) GetId() uint32 {
 	if x != nil {
-		return x.Status
+		return x.Id
 	}
-	return false
+	return 0
 }
 
-type RegistrationCommand struct {
+type LDRRemoval struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	DeviceId  string `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	RequestId string `protobuf:"bytes,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
-func (x *RegistrationCommand) Reset() {
-	*x = RegistrationCommand{}
+func (x *LDRRemoval) Reset() {
+	*x = LDRRemoval{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_pkg_proto_transporter_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -936,13 +902,13 @@ func (x *RegistrationCommand) Reset() {
 	}
 }
 
-func (x *RegistrationCommand) String() string {
+func (x *LDRRemoval) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RegistrationCommand) ProtoMessage() {}
+func (*LDRRemoval) ProtoMessage() {}
 
-func (x *RegistrationCommand) ProtoReflect() protoreflect.Message {
+func (x *LDRRemoval) ProtoReflect() protoreflect.Message {
 	mi := &file_pkg_proto_transporter_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -954,23 +920,385 @@ func (x *RegistrationCommand) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RegistrationCommand.ProtoReflect.Descriptor instead.
-func (*RegistrationCommand) Descriptor() ([]byte, []int) {
+// Deprecated: Use LDRRemoval.ProtoReflect.Descriptor instead.
+func (*LDRRemoval) Descriptor() ([]byte, []int) {
 	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *RegistrationCommand) GetDeviceId() string {
+func (x *LDRRemoval) GetId() uint32 {
 	if x != nil {
-		return x.DeviceId
+		return x.Id
 	}
-	return ""
+	return 0
 }
 
-func (x *RegistrationCommand) GetRequestId() string {
-	if x != nil {
-		return x.RequestId
+type MotionRemoval struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *MotionRemoval) Reset() {
+	*x = MotionRemoval{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
 	}
-	return ""
+}
+
+func (x *MotionRemoval) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MotionRemoval) ProtoMessage() {}
+
+func (x *MotionRemoval) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MotionRemoval.ProtoReflect.Descriptor instead.
+func (*MotionRemoval) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *MotionRemoval) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type ConfigRemoval struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Types that are assignable to Payload:
+	//
+	//	*ConfigRemoval_Climate
+	//	*ConfigRemoval_Ldr
+	//	*ConfigRemoval_Motion
+	Payload isConfigRemoval_Payload `protobuf_oneof:"payload"`
+}
+
+func (x *ConfigRemoval) Reset() {
+	*x = ConfigRemoval{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ConfigRemoval) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfigRemoval) ProtoMessage() {}
+
+func (x *ConfigRemoval) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfigRemoval.ProtoReflect.Descriptor instead.
+func (*ConfigRemoval) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{14}
+}
+
+func (m *ConfigRemoval) GetPayload() isConfigRemoval_Payload {
+	if m != nil {
+		return m.Payload
+	}
+	return nil
+}
+
+func (x *ConfigRemoval) GetClimate() *ClimateRemoval {
+	if x, ok := x.GetPayload().(*ConfigRemoval_Climate); ok {
+		return x.Climate
+	}
+	return nil
+}
+
+func (x *ConfigRemoval) GetLdr() *LDRRemoval {
+	if x, ok := x.GetPayload().(*ConfigRemoval_Ldr); ok {
+		return x.Ldr
+	}
+	return nil
+}
+
+func (x *ConfigRemoval) GetMotion() *MotionRemoval {
+	if x, ok := x.GetPayload().(*ConfigRemoval_Motion); ok {
+		return x.Motion
+	}
+	return nil
+}
+
+type isConfigRemoval_Payload interface {
+	isConfigRemoval_Payload()
+}
+
+type ConfigRemoval_Climate struct {
+	Climate *ClimateRemoval `protobuf:"bytes,2,opt,name=climate,proto3,oneof"`
+}
+
+type ConfigRemoval_Ldr struct {
+	Ldr *LDRRemoval `protobuf:"bytes,3,opt,name=ldr,proto3,oneof"`
+}
+
+type ConfigRemoval_Motion struct {
+	Motion *MotionRemoval `protobuf:"bytes,4,opt,name=motion,proto3,oneof"`
+}
+
+func (*ConfigRemoval_Climate) isConfigRemoval_Payload() {}
+
+func (*ConfigRemoval_Ldr) isConfigRemoval_Payload() {}
+
+func (*ConfigRemoval_Motion) isConfigRemoval_Payload() {}
+
+type RelayState struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Type  RelayType      `protobuf:"varint,1,opt,name=type,proto3,enum=proto.RelayType" json:"type,omitempty"`
+	Port  uint32         `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
+	State RelayStateType `protobuf:"varint,3,opt,name=state,proto3,enum=proto.RelayStateType" json:"state,omitempty"`
+}
+
+func (x *RelayState) Reset() {
+	*x = RelayState{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RelayState) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RelayState) ProtoMessage() {}
+
+func (x *RelayState) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RelayState.ProtoReflect.Descriptor instead.
+func (*RelayState) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *RelayState) GetType() RelayType {
+	if x != nil {
+		return x.Type
+	}
+	return RelayType_UNKNOWN
+}
+
+func (x *RelayState) GetPort() uint32 {
+	if x != nil {
+		return x.Port
+	}
+	return 0
+}
+
+func (x *RelayState) GetState() RelayStateType {
+	if x != nil {
+		return x.State
+	}
+	return RelayStateType_OFF
+}
+
+type RelayStateSync struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *RelayStateSync) Reset() {
+	*x = RelayStateSync{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RelayStateSync) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RelayStateSync) ProtoMessage() {}
+
+func (x *RelayStateSync) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RelayStateSync.ProtoReflect.Descriptor instead.
+func (*RelayStateSync) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{16}
+}
+
+type ClimateData struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id          uint32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Temperature float32 `protobuf:"fixed32,2,opt,name=temperature,proto3" json:"temperature,omitempty"`
+	Humidity    float32 `protobuf:"fixed32,3,opt,name=humidity,proto3" json:"humidity,omitempty"`
+	Aqi         uint32  `protobuf:"varint,4,opt,name=aqi,proto3" json:"aqi,omitempty"`
+}
+
+func (x *ClimateData) Reset() {
+	*x = ClimateData{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ClimateData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClimateData) ProtoMessage() {}
+
+func (x *ClimateData) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClimateData.ProtoReflect.Descriptor instead.
+func (*ClimateData) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ClimateData) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ClimateData) GetTemperature() float32 {
+	if x != nil {
+		return x.Temperature
+	}
+	return 0
+}
+
+func (x *ClimateData) GetHumidity() float32 {
+	if x != nil {
+		return x.Humidity
+	}
+	return 0
+}
+
+func (x *ClimateData) GetAqi() uint32 {
+	if x != nil {
+		return x.Aqi
+	}
+	return 0
+}
+
+type LDRData struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id    uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Value uint32 `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *LDRData) Reset() {
+	*x = LDRData{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_transporter_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LDRData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LDRData) ProtoMessage() {}
+
+func (x *LDRData) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_transporter_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LDRData.ProtoReflect.Descriptor instead.
+func (*LDRData) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_transporter_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *LDRData) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *LDRData) GetValue() uint32 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
 }
 
 var File_pkg_proto_transporter_proto protoreflect.FileDescriptor
@@ -978,107 +1306,118 @@ var File_pkg_proto_transporter_proto protoreflect.FileDescriptor
 var file_pkg_proto_transporter_proto_rawDesc = []byte{
 	0x0a, 0x1b, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x74, 0x72, 0x61, 0x6e,
 	0x73, 0x70, 0x6f, 0x72, 0x74, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x93, 0x01, 0x0a, 0x07, 0x43, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65,
-	0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64,
-	0x12, 0x1d, 0x0a, 0x0a, 0x64, 0x68, 0x74, 0x32, 0x32, 0x5f, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x0d, 0x52, 0x09, 0x64, 0x68, 0x74, 0x32, 0x32, 0x50, 0x6f, 0x72, 0x74, 0x12,
-	0x19, 0x0a, 0x08, 0x61, 0x71, 0x69, 0x5f, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x0d, 0x52, 0x07, 0x61, 0x71, 0x69, 0x50, 0x6f, 0x72, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x68, 0x61,
-	0x73, 0x5f, 0x62, 0x75, 0x7a, 0x7a, 0x65, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x09,
-	0x68, 0x61, 0x73, 0x42, 0x75, 0x7a, 0x7a, 0x65, 0x72, 0x12, 0x1f, 0x0a, 0x0b, 0x62, 0x75, 0x7a,
-	0x7a, 0x65, 0x72, 0x5f, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x0a,
-	0x62, 0x75, 0x7a, 0x7a, 0x65, 0x72, 0x50, 0x6f, 0x72, 0x74, 0x22, 0x29, 0x0a, 0x03, 0x4c, 0x64,
-	0x72, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69,
-	0x64, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52,
-	0x04, 0x70, 0x6f, 0x72, 0x74, 0x22, 0x6c, 0x0a, 0x06, 0x4d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x12,
+	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x41, 0x0a, 0x0f, 0x57, 0x69, 0x66, 0x69, 0x43, 0x72, 0x65, 0x64,
+	0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x73, 0x73, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x73, 0x73, 0x69, 0x64, 0x12, 0x1a, 0x0a, 0x08, 0x70,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x1b, 0x0a, 0x03, 0x55, 0x49, 0x44, 0x12, 0x14,
+	0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x22, 0x21, 0x0a, 0x0f, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x40, 0x0a, 0x10, 0x52, 0x65, 0x67, 0x69, 0x73,
+	0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69,
+	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1c, 0x0a, 0x03, 0x75,
+	0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x2e, 0x55, 0x49, 0x44, 0x52, 0x03, 0x75, 0x69, 0x64, 0x22, 0x2d, 0x0a, 0x0d, 0x52, 0x65, 0x76,
+	0x6f, 0x6b, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1c, 0x0a, 0x03, 0x75, 0x69,
+	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e,
+	0x55, 0x49, 0x44, 0x52, 0x03, 0x75, 0x69, 0x64, 0x22, 0xe5, 0x01, 0x0a, 0x0c, 0x52, 0x66, 0x69,
+	0x64, 0x45, 0x6e, 0x76, 0x65, 0x6c, 0x6f, 0x70, 0x65, 0x12, 0x43, 0x0a, 0x10, 0x72, 0x65, 0x67,
+	0x69, 0x73, 0x74, 0x65, 0x72, 0x5f, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x67, 0x69,
+	0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x48, 0x00, 0x52, 0x0f, 0x72,
+	0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x46,
+	0x0a, 0x11, 0x72, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x5f, 0x72, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x48, 0x00, 0x52, 0x10, 0x72, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3d, 0x0a, 0x0e, 0x72, 0x65, 0x76, 0x6f, 0x6b, 0x65,
+	0x5f, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x76, 0x6f, 0x6b, 0x65, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x48, 0x00, 0x52, 0x0d, 0x72, 0x65, 0x76, 0x6f, 0x6b, 0x65, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x42, 0x09, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64,
+	0x22, 0x95, 0x01, 0x0a, 0x07, 0x43, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1d, 0x0a, 0x0a,
+	0x64, 0x68, 0x74, 0x32, 0x32, 0x5f, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d,
+	0x52, 0x09, 0x64, 0x68, 0x74, 0x32, 0x32, 0x50, 0x6f, 0x72, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x61,
+	0x71, 0x69, 0x5f, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x07, 0x61,
+	0x71, 0x69, 0x50, 0x6f, 0x72, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x68, 0x61, 0x73, 0x5f, 0x62, 0x75,
+	0x7a, 0x7a, 0x65, 0x72, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0a, 0x68, 0x61, 0x73,
+	0x42, 0x75, 0x7a, 0x7a, 0x65, 0x72, 0x73, 0x12, 0x1f, 0x0a, 0x0b, 0x62, 0x75, 0x7a, 0x7a, 0x65,
+	0x72, 0x5f, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x0a, 0x62, 0x75,
+	0x7a, 0x7a, 0x65, 0x72, 0x50, 0x6f, 0x72, 0x74, 0x22, 0x29, 0x0a, 0x03, 0x4c, 0x44, 0x52, 0x12,
 	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12,
 	0x12, 0x0a, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x70,
-	0x6f, 0x72, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x72, 0x65, 0x6c, 0x61, 0x79, 0x5f, 0x69, 0x64, 0x18,
-	0x03, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x07, 0x72, 0x65, 0x6c, 0x61, 0x79, 0x49, 0x64, 0x12, 0x23,
-	0x0a, 0x0d, 0x72, 0x65, 0x6c, 0x61, 0x79, 0x5f, 0x63, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x18,
-	0x04, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x0c, 0x72, 0x65, 0x6c, 0x61, 0x79, 0x43, 0x68, 0x61, 0x6e,
-	0x6e, 0x65, 0x6c, 0x22, 0x3d, 0x0a, 0x05, 0x52, 0x65, 0x6c, 0x61, 0x79, 0x12, 0x0e, 0x0a, 0x02,
-	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12, 0x24, 0x0a, 0x04,
-	0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x10, 0x2e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x2e, 0x52, 0x65, 0x6c, 0x61, 0x79, 0x54, 0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79,
-	0x70, 0x65, 0x22, 0xbf, 0x02, 0x0a, 0x0a, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x44, 0x61, 0x74,
-	0x61, 0x12, 0x18, 0x0a, 0x07, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x0d, 0x52, 0x07, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c, 0x63,
-	0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x0d, 0x52, 0x0b, 0x63, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x19,
-	0x0a, 0x08, 0x6c, 0x64, 0x72, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0d,
-	0x52, 0x07, 0x6c, 0x64, 0x72, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x6d, 0x6f, 0x74,
-	0x69, 0x6f, 0x6e, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x0a,
-	0x6d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x72, 0x65,
-	0x6c, 0x61, 0x79, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x09,
-	0x72, 0x65, 0x6c, 0x61, 0x79, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x2a, 0x0a, 0x08, 0x63, 0x6c, 0x69,
-	0x6d, 0x61, 0x74, 0x65, 0x73, 0x18, 0x08, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x52, 0x08, 0x63, 0x6c, 0x69,
-	0x6d, 0x61, 0x74, 0x65, 0x73, 0x12, 0x1e, 0x0a, 0x04, 0x6c, 0x64, 0x72, 0x73, 0x18, 0x09, 0x20,
-	0x03, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4c, 0x64, 0x72, 0x52,
-	0x04, 0x6c, 0x64, 0x72, 0x73, 0x12, 0x27, 0x0a, 0x07, 0x6d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x73,
-	0x18, 0x0a, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4d,
-	0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x07, 0x6d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x24,
-	0x0a, 0x06, 0x72, 0x65, 0x6c, 0x61, 0x79, 0x73, 0x18, 0x0b, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0c,
-	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x6c, 0x61, 0x79, 0x52, 0x06, 0x72, 0x65,
-	0x6c, 0x61, 0x79, 0x73, 0x22, 0x90, 0x01, 0x0a, 0x11, 0x43, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65,
-	0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x44, 0x61, 0x74, 0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1b, 0x0a, 0x09, 0x64, 0x65,
-	0x76, 0x69, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x64,
-	0x65, 0x76, 0x69, 0x63, 0x65, 0x49, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x74, 0x65, 0x6d, 0x70, 0x65,
-	0x72, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0b, 0x74, 0x65,
-	0x6d, 0x70, 0x65, 0x72, 0x61, 0x74, 0x75, 0x72, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x68, 0x75, 0x6d,
-	0x69, 0x64, 0x69, 0x74, 0x79, 0x18, 0x04, 0x20, 0x01, 0x28, 0x02, 0x52, 0x08, 0x68, 0x75, 0x6d,
-	0x69, 0x64, 0x69, 0x74, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x71, 0x69, 0x18, 0x05, 0x20, 0x01,
-	0x28, 0x02, 0x52, 0x03, 0x61, 0x71, 0x69, 0x22, 0x59, 0x0a, 0x0d, 0x4c, 0x64, 0x72, 0x53, 0x65,
-	0x6e, 0x73, 0x6f, 0x72, 0x44, 0x61, 0x74, 0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1b, 0x0a, 0x09, 0x64, 0x65, 0x76, 0x69,
-	0x63, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x64, 0x65, 0x76,
-	0x69, 0x63, 0x65, 0x49, 0x64, 0x12, 0x1b, 0x0a, 0x09, 0x6c, 0x64, 0x72, 0x5f, 0x76, 0x61, 0x6c,
-	0x75, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x08, 0x6c, 0x64, 0x72, 0x56, 0x61, 0x6c,
-	0x75, 0x65, 0x22, 0x68, 0x0a, 0x10, 0x4d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x6e, 0x73,
-	0x6f, 0x72, 0x44, 0x61, 0x74, 0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1b, 0x0a, 0x09, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65,
-	0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x64, 0x65, 0x76, 0x69, 0x63,
-	0x65, 0x49, 0x64, 0x12, 0x27, 0x0a, 0x0f, 0x6d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x64, 0x65,
-	0x74, 0x65, 0x63, 0x74, 0x65, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0e, 0x6d, 0x6f,
-	0x74, 0x69, 0x6f, 0x6e, 0x44, 0x65, 0x74, 0x65, 0x63, 0x74, 0x65, 0x64, 0x22, 0x5b, 0x0a, 0x09,
-	0x52, 0x65, 0x6c, 0x61, 0x79, 0x44, 0x61, 0x74, 0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1b, 0x0a, 0x09, 0x64, 0x65, 0x76,
-	0x69, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x64, 0x65,
-	0x76, 0x69, 0x63, 0x65, 0x49, 0x64, 0x12, 0x21, 0x0a, 0x0c, 0x72, 0x65, 0x6c, 0x61, 0x79, 0x5f,
-	0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0b, 0x72, 0x65,
-	0x6c, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0xc4, 0x01, 0x0a, 0x0a, 0x53, 0x65,
-	0x6e, 0x73, 0x6f, 0x72, 0x44, 0x61, 0x74, 0x61, 0x12, 0x1b, 0x0a, 0x09, 0x64, 0x65, 0x76, 0x69,
-	0x63, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x64, 0x65, 0x76,
-	0x69, 0x63, 0x65, 0x49, 0x64, 0x12, 0x34, 0x0a, 0x07, 0x63, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43,
-	0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x44, 0x61, 0x74, 0x61,
-	0x48, 0x00, 0x52, 0x07, 0x63, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x12, 0x28, 0x0a, 0x03, 0x6c,
-	0x64, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x2e, 0x4c, 0x64, 0x72, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x44, 0x61, 0x74, 0x61, 0x48, 0x00,
-	0x52, 0x03, 0x6c, 0x64, 0x72, 0x12, 0x31, 0x0a, 0x06, 0x6d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x18,
-	0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4d, 0x6f,
-	0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x44, 0x61, 0x74, 0x61, 0x48, 0x00,
-	0x52, 0x06, 0x6d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x06, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61,
-	0x22, 0x73, 0x0a, 0x0f, 0x53, 0x65, 0x63, 0x75, 0x72, 0x69, 0x74, 0x79, 0x43, 0x6f, 0x6d, 0x6d,
-	0x61, 0x6e, 0x64, 0x12, 0x22, 0x0a, 0x0a, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x5f, 0x69,
-	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x48, 0x00, 0x52, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x49, 0x64, 0x88, 0x01, 0x01, 0x12, 0x1b, 0x0a, 0x09, 0x64, 0x65, 0x76, 0x69, 0x63,
-	0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x64, 0x65, 0x76, 0x69,
-	0x63, 0x65, 0x49, 0x64, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x69, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28,
-	0x0c, 0x52, 0x03, 0x75, 0x69, 0x64, 0x42, 0x0d, 0x0a, 0x0b, 0x5f, 0x72, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x5f, 0x69, 0x64, 0x22, 0x28, 0x0a, 0x0e, 0x53, 0x65, 0x63, 0x75, 0x72, 0x69, 0x74,
-	0x79, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75,
-	0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22,
-	0x51, 0x0a, 0x13, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x43,
-	0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x1b, 0x0a, 0x09, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65,
-	0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x64, 0x65, 0x76, 0x69, 0x63,
-	0x65, 0x49, 0x64, 0x12, 0x1d, 0x0a, 0x0a, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x5f, 0x69,
-	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x49, 0x64, 0x2a, 0x21, 0x0a, 0x09, 0x52, 0x65, 0x6c, 0x61, 0x79, 0x54, 0x79, 0x70, 0x65, 0x12,
-	0x09, 0x0a, 0x05, 0x48, 0x45, 0x41, 0x56, 0x59, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x4c, 0x49,
-	0x47, 0x48, 0x54, 0x10, 0x01, 0x42, 0x0e, 0x5a, 0x0c, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x70, 0x6f,
+	0x6f, 0x72, 0x74, 0x22, 0x7c, 0x0a, 0x06, 0x4d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x0e, 0x0a,
+	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a,
+	0x04, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x70, 0x6f, 0x72,
+	0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x72, 0x65, 0x6c, 0x61, 0x79, 0x5f, 0x70, 0x6f, 0x72, 0x74, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x09, 0x72, 0x65, 0x6c, 0x61, 0x79, 0x50, 0x6f, 0x72, 0x74,
+	0x12, 0x2f, 0x0a, 0x0a, 0x72, 0x65, 0x6c, 0x61, 0x79, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x04,
+	0x20, 0x01, 0x28, 0x0e, 0x32, 0x10, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x6c,
+	0x61, 0x79, 0x54, 0x79, 0x70, 0x65, 0x52, 0x09, 0x72, 0x65, 0x6c, 0x61, 0x79, 0x54, 0x79, 0x70,
+	0x65, 0x22, 0x81, 0x01, 0x0a, 0x0a, 0x46, 0x75, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
+	0x12, 0x2a, 0x0a, 0x08, 0x63, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x6c, 0x69, 0x6d, 0x61,
+	0x74, 0x65, 0x52, 0x08, 0x63, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x73, 0x12, 0x1e, 0x0a, 0x04,
+	0x6c, 0x64, 0x72, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x2e, 0x4c, 0x44, 0x52, 0x52, 0x04, 0x6c, 0x64, 0x72, 0x73, 0x12, 0x27, 0x0a, 0x07,
+	0x6d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x07, 0x6d, 0x6f,
+	0x74, 0x69, 0x6f, 0x6e, 0x73, 0x22, 0xc3, 0x01, 0x0a, 0x0b, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
+	0x54, 0x6f, 0x70, 0x69, 0x63, 0x12, 0x2a, 0x0a, 0x07, 0x63, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43,
+	0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x48, 0x00, 0x52, 0x07, 0x63, 0x6c, 0x69, 0x6d, 0x61, 0x74,
+	0x65, 0x12, 0x1e, 0x0a, 0x03, 0x6c, 0x64, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0a,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4c, 0x44, 0x52, 0x48, 0x00, 0x52, 0x03, 0x6c, 0x64,
+	0x72, 0x12, 0x27, 0x0a, 0x06, 0x6d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4d, 0x6f, 0x74, 0x69, 0x6f, 0x6e,
+	0x48, 0x00, 0x52, 0x06, 0x6d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x34, 0x0a, 0x0b, 0x66, 0x75,
+	0x6c, 0x6c, 0x5f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x06, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x11, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x46, 0x75, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66,
+	0x69, 0x67, 0x48, 0x00, 0x52, 0x0a, 0x66, 0x75, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
+	0x42, 0x09, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x22, 0x20, 0x0a, 0x0e, 0x43,
+	0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x61, 0x6c, 0x12, 0x0e, 0x0a,
+	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x22, 0x1c, 0x0a,
+	0x0a, 0x4c, 0x44, 0x52, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x61, 0x6c, 0x12, 0x0e, 0x0a, 0x02, 0x69,
+	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x22, 0x1f, 0x0a, 0x0d, 0x4d,
+	0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x61, 0x6c, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x22, 0xa4, 0x01, 0x0a,
+	0x0d, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x61, 0x6c, 0x12, 0x31,
+	0x0a, 0x07, 0x63, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x6c, 0x69, 0x6d, 0x61, 0x74, 0x65, 0x52,
+	0x65, 0x6d, 0x6f, 0x76, 0x61, 0x6c, 0x48, 0x00, 0x52, 0x07, 0x63, 0x6c, 0x69, 0x6d, 0x61, 0x74,
+	0x65, 0x12, 0x25, 0x0a, 0x03, 0x6c, 0x64, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x11,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4c, 0x44, 0x52, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x61,
+	0x6c, 0x48, 0x00, 0x52, 0x03, 0x6c, 0x64, 0x72, 0x12, 0x2e, 0x0a, 0x06, 0x6d, 0x6f, 0x74, 0x69,
+	0x6f, 0x6e, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x2e, 0x4d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x61, 0x6c, 0x48, 0x00,
+	0x52, 0x06, 0x6d, 0x6f, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x09, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c,
+	0x6f, 0x61, 0x64, 0x22, 0x73, 0x0a, 0x0a, 0x52, 0x65, 0x6c, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74,
+	0x65, 0x12, 0x24, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32,
+	0x10, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x6c, 0x61, 0x79, 0x54, 0x79, 0x70,
+	0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x12, 0x2b, 0x0a, 0x05, 0x73,
+	0x74, 0x61, 0x74, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x15, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x2e, 0x52, 0x65, 0x6c, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x65, 0x54, 0x79, 0x70,
+	0x65, 0x52, 0x05, 0x73, 0x74, 0x61, 0x74, 0x65, 0x22, 0x10, 0x0a, 0x0e, 0x52, 0x65, 0x6c, 0x61,
+	0x79, 0x53, 0x74, 0x61, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x22, 0x6d, 0x0a, 0x0b, 0x43, 0x6c,
+	0x69, 0x6d, 0x61, 0x74, 0x65, 0x44, 0x61, 0x74, 0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x74, 0x65, 0x6d,
+	0x70, 0x65, 0x72, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0b,
+	0x74, 0x65, 0x6d, 0x70, 0x65, 0x72, 0x61, 0x74, 0x75, 0x72, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x68,
+	0x75, 0x6d, 0x69, 0x64, 0x69, 0x74, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x08, 0x68,
+	0x75, 0x6d, 0x69, 0x64, 0x69, 0x74, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x71, 0x69, 0x18, 0x04,
+	0x20, 0x01, 0x28, 0x0d, 0x52, 0x03, 0x61, 0x71, 0x69, 0x22, 0x2f, 0x0a, 0x07, 0x4c, 0x44, 0x52,
+	0x44, 0x61, 0x74, 0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d,
+	0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x0d, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x2a, 0x36, 0x0a, 0x09, 0x52, 0x65,
+	0x6c, 0x61, 0x79, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0b, 0x0a, 0x07, 0x55, 0x4e, 0x4b, 0x4e, 0x4f,
+	0x57, 0x4e, 0x10, 0x00, 0x12, 0x0c, 0x0a, 0x08, 0x4c, 0x4f, 0x57, 0x5f, 0x44, 0x55, 0x54, 0x59,
+	0x10, 0x01, 0x12, 0x0e, 0x0a, 0x0a, 0x48, 0x45, 0x41, 0x56, 0x59, 0x5f, 0x44, 0x55, 0x54, 0x59,
+	0x10, 0x02, 0x2a, 0x21, 0x0a, 0x0e, 0x52, 0x65, 0x6c, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x65,
+	0x54, 0x79, 0x70, 0x65, 0x12, 0x07, 0x0a, 0x03, 0x4f, 0x46, 0x46, 0x10, 0x00, 0x12, 0x06, 0x0a,
+	0x02, 0x4f, 0x4e, 0x10, 0x01, 0x42, 0x0e, 0x5a, 0x0c, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x70, 0x6f,
 	0x72, 0x74, 0x65, 0x72, 0x2f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
@@ -1094,38 +1433,55 @@ func file_pkg_proto_transporter_proto_rawDescGZIP() []byte {
 	return file_pkg_proto_transporter_proto_rawDescData
 }
 
-var file_pkg_proto_transporter_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pkg_proto_transporter_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_pkg_proto_transporter_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_pkg_proto_transporter_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_pkg_proto_transporter_proto_goTypes = []any{
-	(RelayType)(0),              // 0: proto.RelayType
-	(*Climate)(nil),             // 1: proto.Climate
-	(*Ldr)(nil),                 // 2: proto.Ldr
-	(*Motion)(nil),              // 3: proto.Motion
-	(*Relay)(nil),               // 4: proto.Relay
-	(*ConfigData)(nil),          // 5: proto.ConfigData
-	(*ClimateSensorData)(nil),   // 6: proto.ClimateSensorData
-	(*LdrSensorData)(nil),       // 7: proto.LdrSensorData
-	(*MotionSensorData)(nil),    // 8: proto.MotionSensorData
-	(*RelayData)(nil),           // 9: proto.RelayData
-	(*SensorData)(nil),          // 10: proto.SensorData
-	(*SecurityCommand)(nil),     // 11: proto.SecurityCommand
-	(*SecurityStatus)(nil),      // 12: proto.SecurityStatus
-	(*RegistrationCommand)(nil), // 13: proto.RegistrationCommand
+	(RelayType)(0),           // 0: proto.RelayType
+	(RelayStateType)(0),      // 1: proto.RelayStateType
+	(*WifiCredentials)(nil),  // 2: proto.WifiCredentials
+	(*UID)(nil),              // 3: proto.UID
+	(*RegisterRequest)(nil),  // 4: proto.RegisterRequest
+	(*RegisterResponse)(nil), // 5: proto.RegisterResponse
+	(*RevokeRequest)(nil),    // 6: proto.RevokeRequest
+	(*RfidEnvelope)(nil),     // 7: proto.RfidEnvelope
+	(*Climate)(nil),          // 8: proto.Climate
+	(*LDR)(nil),              // 9: proto.LDR
+	(*Motion)(nil),           // 10: proto.Motion
+	(*FullConfig)(nil),       // 11: proto.FullConfig
+	(*ConfigTopic)(nil),      // 12: proto.ConfigTopic
+	(*ClimateRemoval)(nil),   // 13: proto.ClimateRemoval
+	(*LDRRemoval)(nil),       // 14: proto.LDRRemoval
+	(*MotionRemoval)(nil),    // 15: proto.MotionRemoval
+	(*ConfigRemoval)(nil),    // 16: proto.ConfigRemoval
+	(*RelayState)(nil),       // 17: proto.RelayState
+	(*RelayStateSync)(nil),   // 18: proto.RelayStateSync
+	(*ClimateData)(nil),      // 19: proto.ClimateData
+	(*LDRData)(nil),          // 20: proto.LDRData
 }
 var file_pkg_proto_transporter_proto_depIdxs = []int32{
-	0, // 0: proto.Relay.type:type_name -> proto.RelayType
-	1, // 1: proto.ConfigData.climates:type_name -> proto.Climate
-	2, // 2: proto.ConfigData.ldrs:type_name -> proto.Ldr
-	3, // 3: proto.ConfigData.motions:type_name -> proto.Motion
-	4, // 4: proto.ConfigData.relays:type_name -> proto.Relay
-	6, // 5: proto.SensorData.climate:type_name -> proto.ClimateSensorData
-	7, // 6: proto.SensorData.ldr:type_name -> proto.LdrSensorData
-	8, // 7: proto.SensorData.motion:type_name -> proto.MotionSensorData
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	3,  // 0: proto.RegisterResponse.uid:type_name -> proto.UID
+	3,  // 1: proto.RevokeRequest.uid:type_name -> proto.UID
+	4,  // 2: proto.RfidEnvelope.register_request:type_name -> proto.RegisterRequest
+	5,  // 3: proto.RfidEnvelope.register_response:type_name -> proto.RegisterResponse
+	6,  // 4: proto.RfidEnvelope.revoke_request:type_name -> proto.RevokeRequest
+	0,  // 5: proto.Motion.relay_type:type_name -> proto.RelayType
+	8,  // 6: proto.FullConfig.climates:type_name -> proto.Climate
+	9,  // 7: proto.FullConfig.ldrs:type_name -> proto.LDR
+	10, // 8: proto.FullConfig.motions:type_name -> proto.Motion
+	8,  // 9: proto.ConfigTopic.climate:type_name -> proto.Climate
+	9,  // 10: proto.ConfigTopic.ldr:type_name -> proto.LDR
+	10, // 11: proto.ConfigTopic.motion:type_name -> proto.Motion
+	11, // 12: proto.ConfigTopic.full_config:type_name -> proto.FullConfig
+	13, // 13: proto.ConfigRemoval.climate:type_name -> proto.ClimateRemoval
+	14, // 14: proto.ConfigRemoval.ldr:type_name -> proto.LDRRemoval
+	15, // 15: proto.ConfigRemoval.motion:type_name -> proto.MotionRemoval
+	0,  // 16: proto.RelayState.type:type_name -> proto.RelayType
+	1,  // 17: proto.RelayState.state:type_name -> proto.RelayStateType
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_pkg_proto_transporter_proto_init() }
@@ -1135,7 +1491,7 @@ func file_pkg_proto_transporter_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_pkg_proto_transporter_proto_msgTypes[0].Exporter = func(v any, i int) any {
-			switch v := v.(*Climate); i {
+			switch v := v.(*WifiCredentials); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1147,7 +1503,7 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[1].Exporter = func(v any, i int) any {
-			switch v := v.(*Ldr); i {
+			switch v := v.(*UID); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1159,7 +1515,7 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[2].Exporter = func(v any, i int) any {
-			switch v := v.(*Motion); i {
+			switch v := v.(*RegisterRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1171,7 +1527,7 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[3].Exporter = func(v any, i int) any {
-			switch v := v.(*Relay); i {
+			switch v := v.(*RegisterResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1183,7 +1539,7 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[4].Exporter = func(v any, i int) any {
-			switch v := v.(*ConfigData); i {
+			switch v := v.(*RevokeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1195,7 +1551,7 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[5].Exporter = func(v any, i int) any {
-			switch v := v.(*ClimateSensorData); i {
+			switch v := v.(*RfidEnvelope); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1207,7 +1563,7 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[6].Exporter = func(v any, i int) any {
-			switch v := v.(*LdrSensorData); i {
+			switch v := v.(*Climate); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1219,7 +1575,7 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[7].Exporter = func(v any, i int) any {
-			switch v := v.(*MotionSensorData); i {
+			switch v := v.(*LDR); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1231,7 +1587,7 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[8].Exporter = func(v any, i int) any {
-			switch v := v.(*RelayData); i {
+			switch v := v.(*Motion); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1243,7 +1599,7 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[9].Exporter = func(v any, i int) any {
-			switch v := v.(*SensorData); i {
+			switch v := v.(*FullConfig); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1255,7 +1611,7 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[10].Exporter = func(v any, i int) any {
-			switch v := v.(*SecurityCommand); i {
+			switch v := v.(*ConfigTopic); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1267,7 +1623,7 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[11].Exporter = func(v any, i int) any {
-			switch v := v.(*SecurityStatus); i {
+			switch v := v.(*ClimateRemoval); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1279,7 +1635,79 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 		file_pkg_proto_transporter_proto_msgTypes[12].Exporter = func(v any, i int) any {
-			switch v := v.(*RegistrationCommand); i {
+			switch v := v.(*LDRRemoval); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_transporter_proto_msgTypes[13].Exporter = func(v any, i int) any {
+			switch v := v.(*MotionRemoval); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_transporter_proto_msgTypes[14].Exporter = func(v any, i int) any {
+			switch v := v.(*ConfigRemoval); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_transporter_proto_msgTypes[15].Exporter = func(v any, i int) any {
+			switch v := v.(*RelayState); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_transporter_proto_msgTypes[16].Exporter = func(v any, i int) any {
+			switch v := v.(*RelayStateSync); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_transporter_proto_msgTypes[17].Exporter = func(v any, i int) any {
+			switch v := v.(*ClimateData); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_transporter_proto_msgTypes[18].Exporter = func(v any, i int) any {
+			switch v := v.(*LDRData); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1291,19 +1719,29 @@ func file_pkg_proto_transporter_proto_init() {
 			}
 		}
 	}
-	file_pkg_proto_transporter_proto_msgTypes[9].OneofWrappers = []any{
-		(*SensorData_Climate)(nil),
-		(*SensorData_Ldr)(nil),
-		(*SensorData_Motion)(nil),
+	file_pkg_proto_transporter_proto_msgTypes[5].OneofWrappers = []any{
+		(*RfidEnvelope_RegisterRequest)(nil),
+		(*RfidEnvelope_RegisterResponse)(nil),
+		(*RfidEnvelope_RevokeRequest)(nil),
 	}
-	file_pkg_proto_transporter_proto_msgTypes[10].OneofWrappers = []any{}
+	file_pkg_proto_transporter_proto_msgTypes[10].OneofWrappers = []any{
+		(*ConfigTopic_Climate)(nil),
+		(*ConfigTopic_Ldr)(nil),
+		(*ConfigTopic_Motion)(nil),
+		(*ConfigTopic_FullConfig)(nil),
+	}
+	file_pkg_proto_transporter_proto_msgTypes[14].OneofWrappers = []any{
+		(*ConfigRemoval_Climate)(nil),
+		(*ConfigRemoval_Ldr)(nil),
+		(*ConfigRemoval_Motion)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_proto_transporter_proto_rawDesc,
-			NumEnums:      1,
-			NumMessages:   13,
+			NumEnums:      2,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

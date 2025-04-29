@@ -1,627 +1,599 @@
 package topics
 
 import (
-	"bytes"
 	"encoding/hex"
 	"fmt"
 	"log/slog"
 	"strings"
+	"time"
 
 	"coderero.dev/iot/smaas-server/internal/collections"
 	"coderero.dev/iot/smaas-server/internal/proto/transporter"
 	mqtt "github.com/mochi-mqtt/server/v2"
 	"github.com/mochi-mqtt/server/v2/packets"
+	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
 	"google.golang.org/protobuf/proto"
 )
 
 type Arduino struct {
 	app         core.App
-	logger      *slog.Logger
-	rootTopic   string
 	mqttServer  *mqtt.Server
+	syncRequest bool
 	collections []collections.CollectionDefiner
 }
 
-func NewArduino(rootTopic string, collections []collections.CollectionDefiner, app core.App, mqttServer *mqtt.Server) *Arduino {
+func NewArduino(collections []collections.CollectionDefiner, app core.App, mqttServer *mqtt.Server) *Arduino {
 	return &Arduino{
 		collections: collections,
 		app:         app,
-		logger:      app.Logger(),
-		rootTopic:   rootTopic,
 		mqttServer:  mqttServer,
+		syncRequest: false,
+	}
+}
+func (a *Arduino) Climate(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
+	a.app.Logger().Info("climate data received", slog.String("topic", pk.TopicName))
+	deviceId := a.getId(pk.TopicName)
+	if deviceId == "" {
+		a.app.Logger().Error("failed to get device id from topic", slog.String("topic", pk.TopicName))
+		return
+	}
+
+	var d transporter.ClimateData
+	if err := proto.Unmarshal(pk.Payload, &d); err != nil {
+		a.app.Logger().Error("failed to unmarshal climate data", slog.String("error", err.Error()))
+		return
+	}
+
+	record := core.NewRecord(a.getCollection(collections.ClimateCollectionName))
+	record.Set("sensor_id", int(d.Id))
+	record.Set("device", deviceId)
+	record.Set("temperature", d.Temperature)
+	record.Set("humidity", d.Humidity)
+	record.Set("air_quality", int(d.Aqi))
+
+	a.app.Logger().Info("climate data", slog.String("device_id", deviceId), slog.String("temperature", fmt.Sprintf("%f", d.Temperature)), slog.String("humidity", fmt.Sprintf("%f", d.Humidity)), slog.String("air_quality", fmt.Sprintf("%d", d.Aqi)))
+
+	if err := a.app.Save(record); err != nil {
+		return
 	}
 }
 
-func (a *Arduino) Sensors(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
-	sensorData := &transporter.SensorData{}
-	if err := proto.Unmarshal(pk.Payload, sensorData); err != nil {
-		a.logger.Error("failed to unmarshal sensor data", slog.String("error", err.Error()))
-		return
-	}
-
+func (a *Arduino) LDR(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
 	deviceId := a.getId(pk.TopicName)
 	if deviceId == "" {
-		a.logger.Error("failed to get device id from topic", slog.String("topic", pk.TopicName))
+		a.app.Logger().Error("failed to get device id from topic", slog.String("topic", pk.TopicName))
 		return
 	}
 
-	switch sensorData.Data.(type) {
-	case *transporter.SensorData_Climate:
-
-		climateCollection := a.getCollection(collections.ClimateCollectionName)
-		if climateCollection == nil {
-			a.logger.Error("failed to get climate config collection")
-			return
-		}
-
-		climateRecord := core.NewRecord(climateCollection)
-		climateRecord.Set("sensor_id", sensorData.GetClimate().Id)
-		climateRecord.Set("device", deviceId)
-		climateRecord.Set("temperature", sensorData.GetClimate().Temperature)
-		climateRecord.Set("humidity", sensorData.GetClimate().Humidity)
-		climateRecord.Set("air_quality", sensorData.GetClimate().Aqi)
-
-		if err := a.app.Save(climateRecord); err != nil {
-			a.logger.Error("failed to save climate data", slog.String("error", err.Error()))
-			return
-		}
-		a.logger.Info("saved climate data",
-			slog.String("device_id", deviceId),
-			slog.Float64("temperature", float64(sensorData.GetClimate().Temperature)),
-			slog.Float64("humidity", float64(sensorData.GetClimate().Humidity)),
-			slog.Float64("air_quality", float64(sensorData.GetClimate().Aqi)),
-		)
-
-	case *transporter.SensorData_Ldr:
-		ldrCollection := a.getCollection(collections.LDRCollectionName)
-		if ldrCollection == nil {
-			a.logger.Error("failed to get LDR config collection")
-			return
-		}
-		ldrRecord := core.NewRecord(ldrCollection)
-		ldrRecord.Set("sensor_id", sensorData.GetLdr().Id)
-		ldrRecord.Set("device", deviceId)
-		ldrRecord.Set("ldr_value", sensorData.GetLdr().LdrValue)
-		if err := a.app.Save(ldrRecord); err != nil {
-			a.logger.Error("failed to save LDR data", slog.String("error", err.Error()))
-			return
-		}
-
-		a.logger.Info("saved LDR data", slog.String("device_id", deviceId), slog.Float64("ldr_value", float64(sensorData.GetLdr().LdrValue)))
-	case *transporter.SensorData_Motion:
-		motionCollection := a.getCollection(collections.MotionCollectionName)
-		if motionCollection == nil {
-			a.logger.Error("failed to get motion config collection")
-			return
-		}
-
-		motionRecord := core.NewRecord(motionCollection)
-		motionRecord.Set("sensor_id", sensorData.GetMotion().Id)
-		motionRecord.Set("device", deviceId)
-		motionRecord.Set("motion_value", sensorData.GetMotion().MotionDetected)
-		if err := a.app.Save(motionRecord); err != nil {
-			a.logger.Error("failed to save motion data", slog.String("error", err.Error()))
-			return
-		}
-
-		a.logger.Info("saved motion data", slog.String("device_id", deviceId), slog.Bool("motion_value", sensorData.GetMotion().MotionDetected))
-
+	var d transporter.LDRData
+	if err := proto.Unmarshal(pk.Payload, &d); err != nil {
+		a.app.Logger().Error("failed to unmarshal LDR data", slog.String("error", err.Error()))
+		return
 	}
+	record := core.NewRecord(a.getCollection(collections.LDRCollectionName))
+	record.Set("sensor_id", d.Id)
+	record.Set("device", deviceId)
+	record.Set("ldr_value", d.Value)
 
-	a.logger.Info("sensor data received", slog.String("topic", pk.TopicName), slog.String("device_id", deviceId))
+	if err := a.app.Save(record); err != nil {
+		a.app.Logger().Error("failed to save LDR data", slog.String("error", err.Error()))
+		return
+	}
 }
 
-func (a *Arduino) Auth(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
+func (a *Arduino) Relay(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
 	deviceId := a.getId(pk.TopicName)
 	if deviceId == "" {
-		a.logger.Error("failed to get device id from topic", slog.String("topic", pk.TopicName))
+		a.app.Logger().Error("failed to get device id from topic", slog.String("topic", pk.TopicName))
 		return
 	}
 
-	securityCollection := a.getCollection(collections.SecurityCollectionName)
-	if securityCollection == nil {
-		a.logger.Error("failed to get security config collection")
+	var d transporter.RelayState
+	if err := proto.Unmarshal(pk.Payload, &d); err != nil {
+		a.app.Logger().Error("failed to unmarshal relay data", slog.String("error", err.Error()))
 		return
 	}
 
-	pbData := &transporter.SecurityCommand{}
-	pbStatus := &transporter.SecurityStatus{
-		Status: true,
+	a.syncRequest = true
+
+	var relayId string
+	if d.Type == 1 {
+		relayId = "relaylowduty001"
+	} else {
+		relayId = "relayheavyduty1"
 	}
 
-	if err := proto.Unmarshal(pk.Payload, pbData); err != nil {
-		a.logger.Error("failed to unmarshal security data", slog.String("error", err.Error()))
-		pbStatus.Status = false
+	record, err := a.app.FindFirstRecordByFilter(
+		a.getCollection(collections.UserPortLablesCollectionName),
+		"device = {:device} && port = {:port} && relay = {:relay}",
+		dbx.Params{
+			"device": deviceId,
+			"port":   d.Port,
+			"relay":  relayId,
+		},
+	)
 
-		pbStatusBytes, err := proto.Marshal(pbStatus)
-		if err != nil {
-			a.logger.Error("failed to marshal security status", slog.String("error", err.Error()))
-			return
-		}
-		if err := a.mqttServer.Publish(
-			fmt.Sprintf("arduino/%s/auth", deviceId),
-			pbStatusBytes,
-			false,
-			0,
-		); err != nil {
-			a.logger.Error("failed to publish security status", slog.String("error", err.Error()))
-			return
-		}
+	if err != nil {
+		a.app.Logger().Error("failed to find relay record", slog.String("error", err.Error()))
 		return
 	}
 
-	securityRecord, err := a.app.FindFirstRecordByFilter(
-		collections.SecurityCollectionName,
-		fmt.Sprintf("device_id = %s", pbData.DeviceId),
+	if record == nil {
+		a.app.Logger().Error("failed to find relay record", slog.String("device_id", deviceId), slog.String("port", fmt.Sprintf("%d", d.Port)))
+		return
+	}
+
+	var state bool
+	if d.State == transporter.RelayStateType_ON {
+		state = true
+	} else {
+		state = false
+	}
+
+	record.Set("state", state)
+	if err := a.app.Save(record); err != nil {
+		a.app.Logger().Error("failed to save relay data", slog.String("error", err.Error()))
+		return
+	}
+
+	a.syncRequest = false
+}
+
+func (a *Arduino) FullRelayStateSync(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
+	deviceId := a.getId(pk.TopicName)
+	if deviceId == "" {
+		a.app.Logger().Error("failed to get device id from topic", slog.String("topic", pk.TopicName))
+		return
+	}
+	var d transporter.RelayStateSync
+	if err := proto.Unmarshal(pk.Payload, &d); err != nil {
+		a.app.Logger().Error("failed to unmarshal relay data", slog.String("error", err.Error()))
+		return
+	}
+
+	a.syncRequest = true
+
+	records, err := a.app.FindRecordsByFilter(
+		a.getCollection(collections.UserPortLablesCollectionName),
+		"device = {:device}",
+		"",
+		10,
+		0,
+		dbx.Params{
+			"device": deviceId,
+		},
 	)
 	if err != nil {
-		a.logger.Error("failed to find security record", slog.String("error", err.Error()))
-		pbStatusBytes, err := proto.Marshal(pbStatus)
+		a.app.Logger().Error("failed to find relay records", slog.String("error", err.Error()))
+		return
+	}
+
+	if records == nil {
+		a.app.Logger().Error("failed to find relay records", slog.String("device_id", deviceId))
+		return
+	}
+
+	topic := fmt.Sprintf("arduino/%s/relay", deviceId)
+
+	sd := &transporter.RelayState{}
+
+	for _, record := range records {
+		relayId := record.GetString("relay")
+		port := record.GetInt("port")
+		state := record.GetBool("state")
+
+		if relayId == "relaylowduty001" {
+			sd.Type = transporter.RelayType_LOW_DUTY
+		} else {
+			sd.Type = transporter.RelayType_HEAVY_DUTY
+		}
+
+		sd.Port = uint32(port)
+
+		if state {
+			sd.State = transporter.RelayStateType_ON
+		} else {
+			sd.State = transporter.RelayStateType_OFF
+		}
+
+		payload, err := proto.Marshal(sd)
 		if err != nil {
-			a.logger.Error("failed to marshal security status", slog.String("error", err.Error()))
+			a.app.Logger().Error("failed to marshal relay data", slog.String("error", err.Error()))
 			return
 		}
-		if err := a.mqttServer.Publish(
-			fmt.Sprintf("arduino/%s/auth", deviceId),
-			pbStatusBytes,
-			false,
-			0,
-		); err != nil {
-			a.logger.Error("failed to publish security status", slog.String("error", err.Error()))
+		if err := a.mqttServer.Publish(topic, payload, false, 0); err != nil {
+			a.app.Logger().Error("failed to publish relay data", slog.String("error", err.Error()))
 			return
 		}
-		return
-	}
 
-	if securityRecord == nil {
-		a.logger.Error("failed to find security record")
-		pbStatus.Status = false
-		pbStatusBytes, err := proto.Marshal(pbStatus)
-		if err != nil {
-			a.logger.Error("failed to marshal security status", slog.String("error", err.Error()))
-			return
-		}
-		if err := a.mqttServer.Publish(
-			fmt.Sprintf("arduino/%s/auth", deviceId),
-			pbStatusBytes,
-			false,
-			0,
-		); err != nil {
-			a.logger.Error("failed to publish security status", slog.String("error", err.Error()))
-			return
-		}
-		return
+		a.app.Logger().Info("published relay data", slog.String("topic", topic), slog.String("device_id", deviceId))
+		time.Sleep(100 * time.Millisecond)
 	}
-
-	// decode the security uuid from hex to string
-	pbByte, err := hex.DecodeString(securityRecord.GetString("uuid"))
-	if err != nil {
-		a.logger.Error("failed to decode security uuid", slog.String("error", err.Error()))
-		pbStatus.Status = false
-		pbStatusBytes, err := proto.Marshal(pbStatus)
-		if err != nil {
-			a.logger.Error("failed to marshal security status", slog.String("error", err.Error()))
-			return
-		}
-		if err := a.mqttServer.Publish(
-			fmt.Sprintf("arduino/%s/auth", deviceId),
-			pbStatusBytes,
-			false,
-			0,
-		); err != nil {
-			a.logger.Error("failed to publish security status", slog.String("error", err.Error()))
-			return
-		}
-		return
-	}
-
-	if bytes.Equal(pbData.Uid, pbByte) {
-		pbStatus.Status = true
-	} else {
-		pbStatus.Status = false
-	}
-	pbStatusBytes, err := proto.Marshal(pbStatus)
-	if err != nil {
-		a.logger.Error("failed to marshal security status", slog.String("error", err.Error()))
-		return
-	}
-	if err := a.mqttServer.Publish(
-		fmt.Sprintf("arduino/%s/auth", deviceId),
-		pbStatusBytes,
-		false,
-		0,
-	); err != nil {
-		a.logger.Error("failed to publish security status", slog.String("error", err.Error()))
-		return
-	}
-
-	a.logger.Info("security data received", slog.String("topic", pk.TopicName), slog.String("device_id", deviceId))
+	a.app.Logger().Info("full relay state sync", slog.String("topic", pk.TopicName), slog.String("device_id", deviceId))
+	a.syncRequest = false
 }
 
-func (a *Arduino) RegisterUid(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
+func (a *Arduino) Secuirty(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
 	deviceId := a.getId(pk.TopicName)
 	if deviceId == "" {
-		a.logger.Error("failed to get device id from topic", slog.String("topic", pk.TopicName))
-		return
-	}
-	securityCollection := a.getCollection(collections.SecurityCollectionName)
-	if securityCollection == nil {
-		a.logger.Error("failed to get security config collection")
+		a.app.Logger().Error("failed to get device id from topic", slog.String("topic", pk.TopicName))
 		return
 	}
 
-	pbData := &transporter.SecurityCommand{}
-	pbStatus := &transporter.SecurityStatus{
-		Status: true,
+	var d transporter.RfidEnvelope
+	if err := proto.Unmarshal(pk.Payload, &d); err != nil {
+		a.app.Logger().Error("failed to unmarshal security data", slog.String("error", err.Error()))
+		return
 	}
 
-	if err := proto.Unmarshal(pk.Payload, pbData); err != nil {
-		a.logger.Error("failed to unmarshal security data", slog.String("error", err.Error()))
-		pbStatus.Status = false
-
-		pbStatusBytes, err := proto.Marshal(pbStatus)
+	switch d.Payload.(type) {
+	case *transporter.RfidEnvelope_RegisterResponse:
+		registerResponse := d.GetRegisterResponse()
+		// get the security record with id
+		securityRecord, err := a.app.FindRecordById(collections.SecurityCollectionName, registerResponse.Id)
 		if err != nil {
-			a.logger.Error("failed to marshal security status", slog.String("error", err.Error()))
+			a.app.Logger().Error("failed to find security record", slog.String("error", err.Error()))
 			return
 		}
-		if err := a.mqttServer.Publish(
-			fmt.Sprintf("arduino/%s/auth", deviceId),
-			pbStatusBytes,
-			false,
-			0,
-		); err != nil {
-			a.logger.Error("failed to publish security status", slog.String("error", err.Error()))
-			return
-		}
-		return
-	}
 
-	securityRecord, err := a.app.FindRecordById(collections.SecurityCollectionName, pbData.GetRequestId())
-	if err != nil {
-		a.logger.Error("failed to find security record", slog.String("error", err.Error()))
-		pbStatus.Status = false
-		pbStatusBytes, err := proto.Marshal(pbStatus)
-		if err != nil {
-			a.logger.Error("failed to marshal security status", slog.String("error", err.Error()))
+		if securityRecord == nil {
+			a.app.Logger().Error("failed to find security record")
 			return
 		}
-		if err := a.mqttServer.Publish(
-			fmt.Sprintf("arduino/%s/auth", deviceId),
-			pbStatusBytes,
-			false,
-			0,
-		); err != nil {
-			a.logger.Error("failed to publish security status", slog.String("error", err.Error()))
+		securityRecord.Set("device", deviceId)
+		securityRecord.Set("uuid", hex.EncodeToString(registerResponse.Uid.Value))
+		if err := a.app.Save(securityRecord); err != nil {
+			a.app.Logger().Error("failed to save security data", slog.String("error", err.Error()))
 			return
 		}
-		return
-	}
-	securityRecord.Set("device", deviceId)
-	securityRecord.Set("uuid", hex.EncodeToString(pbData.Uid))
 
-	if err := a.app.Save(securityRecord); err != nil {
-		a.logger.Error("failed to save security data", slog.String("error", err.Error()))
-		pbStatus.Status = false
-		pbStatusBytes, err := proto.Marshal(pbStatus)
-		if err != nil {
-			a.logger.Error("failed to marshal security status", slog.String("error", err.Error()))
-			return
-		}
-		if err := a.mqttServer.Publish(
-			fmt.Sprintf("arduino/%s/auth", deviceId),
-			pbStatusBytes,
-			false,
-			0,
-		); err != nil {
-			a.logger.Error("failed to publish security status", slog.String("error", err.Error()))
-			return
-		}
+		a.app.Logger().Info("security data processed", slog.String("topic", pk.TopicName), slog.String("device_id", deviceId))
+		return
+	default:
+		a.app.Logger().Error("failed to unmarshal security data", slog.String("error", "unknown payload type"))
 		return
 	}
-	pbStatus.Status = true
-	pbStatusBytes, err := proto.Marshal(pbStatus)
-	if err != nil {
-		a.logger.Error("failed to marshal security status", slog.String("error", err.Error()))
-		return
-	}
-	if err := a.mqttServer.Publish(
-		fmt.Sprintf("arduino/%s/auth", deviceId),
-		pbStatusBytes,
-		false,
-		0,
-	); err != nil {
-		a.logger.Error("failed to publish security status", slog.String("error", err.Error()))
-		return
-	}
-	a.logger.Info("security data received", slog.String("topic", pk.TopicName), slog.String("device_id", deviceId))
 }
 
 func (a *Arduino) RegisterTopics() {
-	a.mqttServer.Subscribe(fmt.Sprintf("%s/+/sensors", a.rootTopic), 0, a.Sensors)
-	a.mqttServer.Subscribe(fmt.Sprintf("%s/+/auth", a.rootTopic), 0, a.Auth)
-	a.mqttServer.Subscribe(fmt.Sprintf("%s/+/register", a.rootTopic), 0, a.RegisterUid)
+	if err := a.mqttServer.Subscribe("arduino/+/climate", 0, a.Climate); err != nil {
+		a.app.Logger().Error("failed to subscribe to climate topic", slog.String("error", err.Error()))
+		return
+	}
+	if err := a.mqttServer.Subscribe("arduino/+/ldr", 0, a.LDR); err != nil {
+		a.app.Logger().Error("failed to subscribe to LDR topic", slog.String("error", err.Error()))
+		return
+	}
+	if err := a.mqttServer.Subscribe("arduino/+/relay", 0, a.Relay); err != nil {
+		a.app.Logger().Error("failed to subscribe to relay topic", slog.String("error", err.Error()))
+		return
+	}
+	if err := a.mqttServer.Subscribe("arduino/+/relay/full", 0, a.FullRelayStateSync); err != nil {
+		a.app.Logger().Error("failed to subscribe to full relay state sync topic", slog.String("error", err.Error()))
+		return
+	}
+	if err := a.mqttServer.Subscribe("arduino/+/rfid", 0, a.Secuirty); err != nil {
+		a.app.Logger().Error("failed to subscribe to security topic", slog.String("error", err.Error()))
+		return
+	}
 
 	a.app.OnRecordAfterCreateSuccess(
 		collections.SecurityCollectionName,
 	).BindFunc(a.securityRegister)
-	a.app.OnRecordAfterUpdateSuccess(
+	a.app.OnRecordDeleteExecute(
 		collections.SecurityCollectionName,
-	).BindFunc(a.securityRegister)
+	).BindFunc(a.securityRevoke)
 
 	a.app.OnRecordAfterCreateSuccess(
-		collections.ConfigCollectionName,
 		collections.ClimateConfigCollectionName,
 		collections.LDRConfigCollectionName,
 		collections.MotionConfigCollectionName,
-		collections.RelayConfigCollectionName,
 	).BindFunc(a.configHook)
 
-	a.app.OnRecordAfterUpdateSuccess(
-		collections.ConfigCollectionName,
+	a.app.OnRecordUpdateExecute(
+		collections.UserPortLablesCollectionName,
+	).BindFunc(a.relaySwitchHook)
+
+	a.app.OnRecordAfterDeleteSuccess(
 		collections.ClimateConfigCollectionName,
 		collections.LDRConfigCollectionName,
 		collections.MotionConfigCollectionName,
-		collections.RelayConfigCollectionName,
-	).BindFunc(a.configHook)
-	a.app.OnRecordDelete(
-		collections.DevicesCollectionName,
-		collections.ConfigCollectionName,
 	).BindFunc(a.configResetHook)
+
+	a.app.OnRecordDeleteExecute(
+		collections.DevicesCollectionName,
+	).BindFunc(a.factoryResetHook)
 }
 
 func (a *Arduino) securityRegister(e *core.RecordEvent) error {
-	securityCollection := a.getCollection(collections.SecurityCollectionName)
-	if securityCollection == nil {
-		a.logger.Error("failed to get security config collection")
+	record := e.Record
+	if record == nil {
+		a.app.Logger().Error("failed to get record from event")
 		return nil
 	}
 
-	pbData := &transporter.RegistrationCommand{
-		DeviceId:  e.Record.GetString("device"),
-		RequestId: e.Record.Id,
+	deviceId := record.GetString("device")
+	if deviceId == "" {
+		a.app.Logger().Error("failed to get device id from record", slog.String("record_id", record.Id))
+		return nil
 	}
 
-	pbDataBytes, err := proto.Marshal(pbData)
+	topic := fmt.Sprintf("arduino/%s/rfid", deviceId)
+
+	var d transporter.RfidEnvelope
+	d.Payload = &transporter.RfidEnvelope_RegisterRequest{
+		RegisterRequest: &transporter.RegisterRequest{
+			Id: record.Id,
+		},
+	}
+
+	payload, err := proto.Marshal(&d)
 	if err != nil {
-		a.logger.Error("failed to marshal security data", slog.String("error", err.Error()))
+		a.app.Logger().Error("failed to marshal security data", slog.String("error", err.Error()))
 		return nil
 	}
-	topic := fmt.Sprintf("arduino/%s/register", e.Record.GetString("device"))
-	if err := a.mqttServer.Publish(topic, pbDataBytes, false, 0); err != nil {
-		a.logger.Error("failed to publish security data", slog.String("error", err.Error()))
+	if err := a.mqttServer.Publish(topic, payload, false, 0); err != nil {
+		a.app.Logger().Error("failed to publish security data", slog.String("error", err.Error()))
 		return nil
 	}
-	a.logger.Info("published security data", slog.String("topic", topic))
-	return nil
+	a.app.Logger().Info("published security data", slog.String("topic", topic), slog.String("device_id", deviceId))
+	return e.Next()
+}
+
+func (a *Arduino) securityRevoke(e *core.RecordEvent) error {
+	record := e.Record
+	if record == nil {
+		a.app.Logger().Error("failed to get record from event")
+		return nil
+	}
+
+	deviceId := record.GetString("device")
+	if deviceId == "" {
+		a.app.Logger().Error("failed to get device id from record", slog.String("record_id", record.Id))
+		return nil
+	}
+
+	uid := record.GetString("uuid")
+	if uid == "" {
+		a.app.Logger().Error("failed to get uid from record", slog.String("record_id", record.Id))
+		return nil
+	}
+
+	uidBytes, err := hex.DecodeString(uid)
+	if err != nil {
+		a.app.Logger().Error("failed to decode uid", slog.String("error", err.Error()))
+		return nil
+	}
+
+	topic := fmt.Sprintf("arduino/%s/rfid", deviceId)
+
+	var d transporter.RfidEnvelope
+	d.Payload = &transporter.RfidEnvelope_RevokeRequest{
+		RevokeRequest: &transporter.RevokeRequest{
+			Uid: &transporter.UID{
+				Value: uidBytes,
+			},
+		},
+	}
+
+	payload, err := proto.Marshal(&d)
+	if err != nil {
+		a.app.Logger().Error("failed to marshal security data", slog.String("error", err.Error()))
+		return nil
+	}
+	if err := a.mqttServer.Publish(topic, payload, false, 0); err != nil {
+		a.app.Logger().Error("failed to publish security data", slog.String("error", err.Error()))
+		return nil
+	}
+	a.app.Logger().Info("published security data", slog.String("topic", topic), slog.String("device_id", deviceId))
+	return e.Next()
 }
 
 func (a *Arduino) configHook(e *core.RecordEvent) error {
-	configData := &transporter.ConfigData{}
-	configCollection := a.getCollection(collections.ConfigCollectionName)
-	if configCollection == nil {
-		a.logger.Error("failed to get config collection")
+	a.app.Logger().Info("config hook called")
+	record := e.Record
+	if record == nil {
+		a.app.Logger().Error("failed to get record from event")
 		return nil
 	}
-
-	climateConfigCollection := a.getCollection(collections.ClimateConfigCollectionName)
-	if climateConfigCollection == nil {
-		a.logger.Error("failed to get climate config collection")
-		return nil
-	}
-
-	ldrConfigCollection := a.getCollection(collections.LDRConfigCollectionName)
-	if ldrConfigCollection == nil {
-		a.logger.Error("failed to get LDR config collection")
-		return nil
-	}
-
-	motionConfigCollection := a.getCollection(collections.MotionConfigCollectionName)
-	if motionConfigCollection == nil {
-		a.logger.Error("failed to get motion config collection")
-		return nil
-	}
-
-	relayConfigCollection := a.getCollection(collections.RelayConfigCollectionName)
-	if relayConfigCollection == nil {
-		a.logger.Error("failed to get relay config collection")
-		return nil
-	}
-
-	var id string
-	var deviceId string
-
-	collectionName := e.Record.Collection().Name
-	if collectionName == collections.ConfigCollectionName {
-		id = e.Record.Id
-		deviceId = e.Record.GetString("device")
-	} else {
-		id = e.Record.GetString("config")
-		config, err := a.app.FindRecordById(configCollection, id)
-		if err != nil {
-			a.logger.Error("failed to find device record", slog.String("error", err.Error()))
-			return nil
-		}
-		deviceId = config.Id
-	}
-	if id == "" {
-		a.logger.Error("failed to get config id from record", slog.String("record_id", e.Record.Id))
-		return nil
-	}
-
+	deviceId := record.GetString("device")
 	if deviceId == "" {
-		a.logger.Error("failed to find device record", slog.String("device_id", deviceId))
-		return nil
-	}
-
-	configData.Version = uint32(e.Record.GetInt("version"))
-
-	climateRecords, err := a.app.FindRecordsByFilter(
-		climateConfigCollection,
-		"config = "+id,
-		"-sensor_id",
-		5,
-		0,
-	)
-
-	if err != nil {
-		a.logger.Error("failed to get climate config records", slog.String("error", err.Error()))
-		return nil
-	}
-	ldrRecords, err := a.app.FindRecordsByFilter(
-		ldrConfigCollection,
-		"config = "+id,
-		"-sensor_id",
-		5,
-		0,
-	)
-	if err != nil {
-		a.logger.Error("failed to get LDR config records", slog.String("error", err.Error()))
-		return nil
-	}
-
-	motionRecords, err := a.app.FindRecordsByFilter(
-		motionConfigCollection,
-		"config = "+id,
-		"-sensor_id",
-		5,
-		0,
-	)
-
-	if err != nil {
-		a.logger.Error("failed to get motion config records", slog.String("error", err.Error()))
-		return nil
-	}
-
-	relayRecords, err := a.app.FindRecordsByFilter(
-		relayConfigCollection,
-		"config = "+id,
-		"-sensor_id",
-		5,
-		0,
-	)
-
-	if err != nil {
-		a.logger.Error("failed to get relay config records", slog.String("error", err.Error()))
-		return nil
-	}
-
-	climates := []*transporter.Climate{}
-	ldrs := []*transporter.Ldr{}
-	motions := []*transporter.Motion{}
-	relays := []*transporter.Relay{}
-
-	for _, record := range climateRecords {
-		climate := &transporter.Climate{
-			Id:         uint32(record.GetInt("sensor_id")),
-			Dht22Port:  uint32(record.GetInt("dht22_port")),
-			AqiPort:    uint32(record.GetInt("aqi_port")),
-			HasBuzzer:  record.GetBool("has_buzzer"),
-			BuzzerPort: uint32(record.GetInt("buzzer_port")),
-		}
-		climates = append(climates, climate)
-	}
-
-	for _, record := range ldrRecords {
-		ldr := &transporter.Ldr{
-			Id:   uint32(record.GetInt("sensor_id")),
-			Port: uint32(record.GetInt("port")),
-		}
-		ldrs = append(ldrs, ldr)
-	}
-
-	for _, record := range motionRecords {
-		motion := &transporter.Motion{
-			Id:      uint32(record.GetInt("sensor_id")),
-			Port:    uint32(record.GetInt("port")),
-			RelayId: uint32(record.GetInt("relay_id")),
-		}
-		motions = append(motions, motion)
-	}
-
-	for _, record := range relayRecords {
-		relay := &transporter.Relay{
-			Id:   uint32(record.GetInt("sensor_id")),
-			Type: transporter.RelayType(record.GetInt("type")),
-		}
-		relays = append(relays, relay)
-	}
-
-	configData.ClimateSize = uint32(len(climates))
-	configData.Climates = climates
-	configData.LdrSize = uint32(len(ldrs))
-	configData.Ldrs = ldrs
-	configData.MotionSize = uint32(len(motions))
-	configData.Motions = motions
-	configData.RelaySize = uint32(len(relays))
-	configData.Relays = relays
-
-	configDataBytes, err := proto.Marshal(configData)
-	if err != nil {
-		a.logger.Error("failed to marshal config data", slog.String("error", err.Error()))
+		a.app.Logger().Error("failed to get device id from record", slog.String("record_id", record.Id))
 		return nil
 	}
 
 	topic := fmt.Sprintf("arduino/%s/config", deviceId)
-	if err := a.mqttServer.Publish(topic, configDataBytes, false, 0); err != nil {
-		a.logger.Error("failed to publish config data", slog.String("error", err.Error()))
+
+	configPayload := &transporter.ConfigTopic{}
+
+	collectionName := record.Collection().Name
+	switch collectionName {
+	case collections.ClimateConfigCollectionName:
+		configPayload.Payload = &transporter.ConfigTopic_Climate{
+			Climate: &transporter.Climate{
+				Id:         uint32(record.GetInt("sensor_id")),
+				Dht22Port:  uint32(record.GetInt("dht22_port")),
+				AqiPort:    uint32(record.GetInt("aqi_port")),
+				HasBuzzers: record.GetBool("has_buzzer"),
+				BuzzerPort: uint32(record.GetInt("buzzer_port")),
+			},
+		}
+	case collections.LDRConfigCollectionName:
+		configPayload.Payload = &transporter.ConfigTopic_Ldr{
+			Ldr: &transporter.LDR{
+				Id:   uint32(record.GetInt("sensor_id")),
+				Port: uint32(record.GetInt("port")),
+			},
+		}
+	case collections.MotionConfigCollectionName:
+		var relayType transporter.RelayType
+		if record.GetInt("relay_type") == 1 {
+			relayType = transporter.RelayType_LOW_DUTY
+		} else {
+			relayType = transporter.RelayType_HEAVY_DUTY
+		}
+
+		configPayload.Payload = &transporter.ConfigTopic_Motion{
+			Motion: &transporter.Motion{
+				Id:        uint32(record.GetInt("sensor_id")),
+				Port:      uint32(record.GetInt("port")),
+				RelayPort: uint32(record.GetInt("relay_port")),
+				RelayType: relayType,
+			},
+		}
+	default:
+		break
+	}
+
+	payload, err := proto.Marshal(configPayload)
+	if err != nil {
+		a.app.Logger().Error("failed to marshal config data", slog.String("error", err.Error()))
+		return nil
+	}
+	if err := a.mqttServer.Publish(topic, payload, false, 0); err != nil {
+		a.app.Logger().Error("failed to publish config data", slog.String("error", err.Error()))
 		return nil
 	}
 
-	a.logger.Info("published config data")
+	a.app.Logger().Info("published config data", slog.String("topic", topic), slog.String("device_id", deviceId))
 	return nil
 }
 
 func (a *Arduino) configResetHook(e *core.RecordEvent) error {
-	configData := &transporter.ConfigData{
-		Version:     0,
-		ClimateSize: 0,
-		Climates:    nil,
-		LdrSize:     0,
-		Ldrs:        nil,
-		MotionSize:  0,
-		Motions:     nil,
-		RelaySize:   0,
-		Relays:      nil,
-	}
-
-	var id string
-	var deviceId string
-
-	colletionName := e.Record.Collection().Name
-	if colletionName == collections.ConfigCollectionName {
-		id = e.Record.GetString("id")
-		deviceId = e.Record.GetString("device_id")
-	} else {
-		id = e.Record.GetString("config")
-		config, err := a.app.FindRecordById(collections.ConfigCollectionName, id)
-		if err != nil {
-			a.logger.Error("failed to find device record", slog.String("error", err.Error()))
-			return nil
-		}
-		deviceId = config.Id
-	}
-	if id == "" {
-		a.logger.Error("failed to get config id from record", slog.String("record_id", e.Record.Id))
+	record := e.Record
+	if record == nil {
+		a.app.Logger().Error("failed to get record from event")
 		return nil
 	}
+	deviceId := record.GetString("device")
 	if deviceId == "" {
-		a.logger.Error("failed to find device record", slog.String("device_id", deviceId))
-		return nil
-	}
-	configDataBytes, err := proto.Marshal(configData)
-	if err != nil {
-		a.logger.Error("failed to marshal config data", slog.String("error", err.Error()))
+		a.app.Logger().Error("failed to get device id from record", slog.String("record_id", record.Id))
 		return nil
 	}
 
-	topic := fmt.Sprintf("arduino/%s/config", deviceId)
-	if err := a.mqttServer.Publish(topic, configDataBytes, false, 0); err != nil {
-		a.logger.Error("failed to publish config data", slog.String("error", err.Error()))
+	sensorID := record.GetInt("sensor_id")
+	topic := fmt.Sprintf("arduino/%s/config/remove", deviceId)
+
+	var c *transporter.ConfigRemoval
+
+	switch record.Collection().Name {
+	case collections.ClimateConfigCollectionName:
+		c = &transporter.ConfigRemoval{
+			Payload: &transporter.ConfigRemoval_Climate{
+				Climate: &transporter.ClimateRemoval{
+					Id: uint32(sensorID),
+				},
+			},
+		}
+	case collections.LDRConfigCollectionName:
+		c = &transporter.ConfigRemoval{
+			Payload: &transporter.ConfigRemoval_Ldr{
+				Ldr: &transporter.LDRRemoval{
+					Id: uint32(record.GetInt("sensor_id")),
+				},
+			},
+		}
+
+	case collections.MotionConfigCollectionName:
+		c = &transporter.ConfigRemoval{
+			Payload: &transporter.ConfigRemoval_Motion{
+				Motion: &transporter.MotionRemoval{
+					Id: uint32(record.GetInt("sensor_id")),
+				},
+			},
+		}
+	}
+
+	payload, err := proto.Marshal(c)
+	if err != nil {
+		a.app.Logger().Error("failed to marshal config data", slog.String("error", err.Error()))
 		return nil
 	}
-	a.logger.Info("published config data")
-	return nil
+	if err := a.mqttServer.Publish(topic, payload, false, 0); err != nil {
+		a.app.Logger().Error("failed to publish config data", slog.String("error", err.Error()))
+		return nil
+	}
+
+	a.app.Logger().Info("published config data", slog.String("topic", topic), slog.String("device_id", deviceId))
+	return e.Next()
+}
+
+func (a *Arduino) factoryResetHook(e *core.RecordEvent) error {
+	record := e.Record
+	if record == nil {
+		a.app.Logger().Error("failed to get record from event")
+		return nil
+	}
+	deviceId := record.Id
+	if deviceId == "" {
+		a.app.Logger().Error("failed to get device id from record", slog.String("record_id", record.Id))
+		return nil
+	}
+
+	topic := fmt.Sprintf("arduino/%s/factory_reset", deviceId)
+
+	// random bytes
+	d := []byte{0x00}
+
+	if err := a.mqttServer.Publish(topic, d, false, 0); err != nil {
+		a.app.Logger().Error("failed to publish factory reset data", slog.String("error", err.Error()))
+		return nil
+	}
+
+	a.app.Logger().Info("published factory reset data", slog.String("topic", topic), slog.String("device_id", deviceId))
+	return e.Next()
+}
+
+func (a *Arduino) relaySwitchHook(e *core.RecordEvent) error {
+	if a.syncRequest {
+		return e.Next()
+	}
+
+	record := e.Record
+	if record == nil {
+		a.app.Logger().Error("failed to get record from event")
+		return nil
+	}
+	deviceId := record.GetString("device")
+	if deviceId == "" {
+		a.app.Logger().Error("failed to get device id from record", slog.String("record_id", record.Id))
+		return nil
+	}
+
+	var t transporter.RelayType
+	relayId := record.GetString("relay")
+	if relayId == "relaylowduty001" {
+		t = transporter.RelayType_LOW_DUTY
+	} else {
+		t = transporter.RelayType_HEAVY_DUTY
+	}
+
+	var s transporter.RelayStateType
+	state := record.GetBool("state")
+	if state {
+		s = transporter.RelayStateType_ON
+	} else {
+		s = transporter.RelayStateType_OFF
+	}
+
+	var d transporter.RelayState
+	d.Type = t
+	d.State = s
+	d.Port = uint32(record.GetInt("port"))
+	payload, err := proto.Marshal(&d)
+	if err != nil {
+		a.app.Logger().Error("failed to marshal relay data", slog.String("error", err.Error()))
+		return nil
+	}
+
+	topic := fmt.Sprintf("arduino/%s/relay", deviceId)
+	if err := a.mqttServer.Publish(topic, payload, false, 0); err != nil {
+		a.app.Logger().Error("failed to publish relay data", slog.String("error", err.Error()))
+		return nil
+	}
+	a.app.Logger().Info("published relay data", slog.String("topic", topic), slog.String("device_id", deviceId))
+	return e.Next()
 }
 
 func (*Arduino) getId(topic string) string {

@@ -6,58 +6,17 @@ import (
 )
 
 const (
-	ConfigCollectionName        = "config"
 	ClimateConfigCollectionName = "climate_config"
 	LDRConfigCollectionName     = "ldr_config"
 	MotionConfigCollectionName  = "motion_config"
 	RelayConfigCollectionName   = "relay_config"
 )
 
-type Config struct {
-	ID      string `json:"id"`
-	Device  string `json:"device_id"`
-	Version int    `json:"version"`
-}
-
-func (*Config) Name() string {
-	return ConfigCollectionName
-}
-
-func (*Config) Schema() *core.Collection {
-	collection := core.NewBaseCollection(ConfigCollectionName, ConfigCollectionName)
-	collection.ListRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
-	collection.ViewRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
-	collection.CreateRule = types.Pointer("@request.auth.id != '' && @request.body.user = @request.auth.id")
-	collection.UpdateRule = types.Pointer(`
-        @request.auth.id != '' &&
-		@request.auth.id = device.user.id &&
-        (@request.body.user:isset = false || @request.body.user = @request.auth.id)
-    `)
-	collection.DeleteRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
-
-	collection.Fields.Add(
-		&core.RelationField{
-			CollectionId:  DevicesCollectionName,
-			Name:          "device",
-			CascadeDelete: true,
-			Required:      true,
-			MinSelect:     1,
-			MaxSelect:     1,
-		},
-		&core.NumberField{
-			Name:     "version",
-			Required: true,
-		},
-	)
-
-	return collection
-}
-
 type ClimateConfig struct {
 	ID         string `json:"id"`
 	SensorId   string `json:"sensor_id"`
 	Lable      string `json:"lable"`
-	Config     string `json:"config"`
+	Device     string `json:"device"`
 	Dht22Port  int    `json:"dht22_port"`
 	AQIPort    int    `json:"aqi_port"`
 	HasBuzzer  bool   `json:"has_buzzer"`
@@ -71,24 +30,24 @@ func (*ClimateConfig) Name() string {
 
 func (*ClimateConfig) Schema() *core.Collection {
 	collection := core.NewBaseCollection(ClimateConfigCollectionName, ClimateConfigCollectionName)
-	collection.ListRule = types.Pointer("@request.auth.id != '' && @request.auth.id = config.device.user.id")
-	collection.ViewRule = types.Pointer("@request.auth.id != '' && @request.auth.id = config.device.user.id")
+	collection.ListRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
+	collection.ViewRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
 	collection.CreateRule = types.Pointer("@request.auth.id != '' && @request.body.user = @request.auth.id")
 	collection.UpdateRule = types.Pointer(`
         @request.auth.id != '' &&
-		@request.auth.id = config.device.user.id &&
+		@request.auth.id = device.user.id &&
         (@request.body.user:isset = false || @request.body.user = @request.auth.id)
     `)
-	collection.DeleteRule = types.Pointer(`@request.auth.id != '' && @request.auth.id = config.device.user.id`)
+	collection.DeleteRule = types.Pointer(`@request.auth.id != '' && @request.auth.id = device.user.id`)
 
 	collection.Fields.Add(
 		&core.RelationField{
-			CollectionId:  ConfigCollectionName,
-			Name:          "config",
+			CollectionId:  DevicesCollectionName,
+			Name:          "device",
 			CascadeDelete: true,
 			Required:      true,
 			MinSelect:     1,
-			MaxSelect:     2,
+			MaxSelect:     1,
 		},
 		&core.NumberField{
 			Name:     "sensor_id",
@@ -101,29 +60,22 @@ func (*ClimateConfig) Schema() *core.Collection {
 			Required: true,
 		},
 		&core.NumberField{
-			Name:     "config_id",
-			Required: true,
-		},
-		&core.NumberField{
-			Name:     "dht22_port",
-			Required: true,
-			OnlyInt:  true,
+			Name:    "dht22_port",
+			OnlyInt: true,
 		},
 		&core.NumberField{
 			Name:     "aqi_port",
 			Required: true,
 		},
 		&core.BoolField{
-			Name:     "has_buzzer",
-			Required: true,
+			Name: "has_buzzer",
 		},
 		&core.NumberField{
-			Name:     "buzzer_port",
-			Required: true,
+			Name:    "buzzer_port",
+			OnlyInt: true,
 		},
 		&core.BoolField{
-			Name:     "is_index",
-			Required: true,
+			Name: "is_index",
 		},
 	)
 
@@ -134,7 +86,7 @@ type LDRConfig struct {
 	ID       string `json:"id"`
 	SensorId string `json:"sensor_id"`
 	Lable    string `json:"lable"`
-	Config   string `json:"config"`
+	Device   string `json:"device"`
 	Port     int    `json:"port"`
 }
 
@@ -144,24 +96,24 @@ func (*LDRConfig) Name() string {
 
 func (*LDRConfig) Schema() *core.Collection {
 	collection := core.NewBaseCollection(LDRConfigCollectionName, LDRConfigCollectionName)
-	collection.ListRule = types.Pointer("@request.auth.id != '' && @request.auth.id = config.device.user.id")
-	collection.ViewRule = types.Pointer("@request.auth.id != '' && @request.auth.id = config.device.user.id")
+	collection.ListRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
+	collection.ViewRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
 	collection.CreateRule = types.Pointer("@request.auth.id != '' && @request.body.user = @request.auth.id")
 	collection.UpdateRule = types.Pointer(`
         @request.auth.id != '' &&
-		@request.auth.id = config.device.user.id &&
+		@request.auth.id = device.user.id &&
         (@request.body.user:isset = false || @request.body.user = @request.auth.id)
     `)
-	collection.DeleteRule = types.Pointer(`@request.auth.id != '' && @request.auth.id = config.device.user.id`)
+	collection.DeleteRule = types.Pointer(`@request.auth.id != '' && @request.auth.id = device.user.id`)
 
 	collection.Fields.Add(
 		&core.RelationField{
-			CollectionId:  ConfigCollectionName,
-			Name:          "config",
+			CollectionId:  DevicesCollectionName,
+			Name:          "device",
 			CascadeDelete: true,
 			Required:      true,
 			MinSelect:     1,
-			MaxSelect:     2,
+			MaxSelect:     1,
 		},
 		&core.NumberField{
 			Name:     "sensor_id",
@@ -174,8 +126,8 @@ func (*LDRConfig) Schema() *core.Collection {
 			Required: true,
 		},
 		&core.NumberField{
-			Name:     "port",
-			Required: true,
+			Name:    "port",
+			OnlyInt: true,
 		},
 	)
 
@@ -186,7 +138,7 @@ type MotionConfig struct {
 	ID        string `json:"id"`
 	SensorId  string `json:"sensor_id"`
 	Lable     string `json:"lable"`
-	Config    string `json:"config"`
+	Device    string `json:"device"`
 	Port      int    `json:"port"`
 	RelayType int    `json:"relay_type"`
 	RelayPort int    `json:"relay_port"`
@@ -198,24 +150,24 @@ func (*MotionConfig) Name() string {
 
 func (*MotionConfig) Schema() *core.Collection {
 	collection := core.NewBaseCollection(MotionConfigCollectionName, MotionConfigCollectionName)
-	collection.ListRule = types.Pointer("@request.auth.id != '' && @request.auth.id = config.device.user.id")
-	collection.ViewRule = types.Pointer("@request.auth.id != '' && @request.auth.id = config.device.user.id")
+	collection.ListRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
+	collection.ViewRule = types.Pointer("@request.auth.id != '' && @request.auth.id = device.user.id")
 	collection.CreateRule = types.Pointer("@request.auth.id != '' && @request.body.user = @request.auth.id")
 	collection.UpdateRule = types.Pointer(`
         @request.auth.id != '' &&
-		@request.auth.id = config.device.user.id &&
+		@request.auth.id = device.user.id &&
         (@request.body.user:isset = false || @request.body.user = @request.auth.id)
     `)
-	collection.DeleteRule = types.Pointer(`@request.auth.id != '' && @request.auth.id = config.device.user.id`)
+	collection.DeleteRule = types.Pointer(`@request.auth.id != '' && @request.auth.id = device.user.id`)
 
 	collection.Fields.Add(
 		&core.RelationField{
-			CollectionId:  ConfigCollectionName,
-			Name:          "config",
+			CollectionId:  DevicesCollectionName,
+			Name:          "device",
 			CascadeDelete: true,
 			Required:      true,
 			MinSelect:     1,
-			MaxSelect:     4,
+			MaxSelect:     1,
 		},
 		&core.NumberField{
 			Name:     "sensor_id",
@@ -228,8 +180,8 @@ func (*MotionConfig) Schema() *core.Collection {
 			Required: true,
 		},
 		&core.NumberField{
-			Name:     "port",
-			Required: true,
+			Name:    "port",
+			OnlyInt: true,
 		},
 		&core.NumberField{
 			Name:     "relay_type",

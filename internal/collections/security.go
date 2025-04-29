@@ -47,9 +47,9 @@ func (*Security) Schema() *core.Collection {
 			Name:     "uuid",
 			Required: true,
 		},
-		&core.TextField{
+		&core.AutodateField{
 			Name:     "timestamp",
-			Required: true,
+			OnCreate: true,
 		},
 	)
 
