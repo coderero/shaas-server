@@ -12,6 +12,8 @@ import (
 	"github.com/mochi-mqtt/server/v2/hooks/auth"
 	"github.com/mochi-mqtt/server/v2/listeners"
 	"github.com/pocketbase/pocketbase/core"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type MQTT struct {
@@ -26,13 +28,21 @@ func NewMQTT(port int, collections []collections.CollectionDefiner, app core.App
 			Level: slog.LevelError,
 		})),
 	})
-	config, err := loadConfig()
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	err = server.AddHook(new(auth.Hook), &auth.Options{
-		Data: config,
+	fmt.Println("MQTT server started on port", port)
+	// Print the mqtt username and password
+	fmt.Println("MQTT username:", os.Getenv("MQTT_USERNAME"))
+	fmt.Println("MQTT password:", os.Getenv("MQTT_PASSWORD"))
+	err := server.AddHook(new(auth.Hook), &auth.Options{
+		Ledger: &auth.Ledger{
+			Auth: auth.AuthRules{
+				{
+					Username: auth.RString(os.Getenv("MQTT_USERNAME")),
+					Password: auth.RString(os.Getenv("MQTT_PASSWORD")),
+					Allow:    true,
+				},
+			},
+		},
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -63,12 +73,4 @@ func (m *MQTT) Start() error {
 
 func (m *MQTT) RegisterTopics() {
 	m.arduino.RegisterTopics()
-}
-
-func loadConfig() ([]byte, error) {
-	config, err := os.ReadFile("config/mqtt.yaml")
-	if err != nil {
-		return nil, fmt.Errorf("failed to read config file: %w", err)
-	}
-	return config, nil
 }
