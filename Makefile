@@ -8,11 +8,11 @@ NC=\033[0m # No Color
 
 
 build:
-	@go build ./cmd/main.go bin/iot-server
+	@go build -o bin/iot-server ./cmd/main.go
 
 run:
 	@echo "${GREEN}Running the server...${NC}"
-	@./bin/iot-server
+	@./bin/iot-server serve
 	@echo "${GREEN}Server is running!${NC}"
 	@echo "${GREEN}Press Ctrl+C to stop the server.${NC}"
 

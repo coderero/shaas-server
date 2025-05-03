@@ -26,8 +26,14 @@ func NewMQTT(port int, collections []collections.CollectionDefiner, app core.App
 			Level: slog.LevelError,
 		})),
 	})
+	config, err := loadConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	err := server.AddHook(new(auth.AllowHook), nil)
+	err = server.AddHook(new(auth.Hook), &auth.Options{
+		Data: config,
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,4 +63,12 @@ func (m *MQTT) Start() error {
 
 func (m *MQTT) RegisterTopics() {
 	m.arduino.RegisterTopics()
+}
+
+func loadConfig() ([]byte, error) {
+	config, err := os.ReadFile("config/mqtt.yaml")
+	if err != nil {
+		return nil, fmt.Errorf("failed to read config file: %w", err)
+	}
+	return config, nil
 }

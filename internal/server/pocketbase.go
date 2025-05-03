@@ -21,6 +21,7 @@ func NewPocketBase() *PocketBase {
 			&collections.LDR{},
 			&collections.Relay{},
 			&collections.Security{},
+			&collections.SecurityLogs{},
 			&collections.ClimateConfig{},
 			&collections.LDRConfig{},
 			&collections.Relay{},
