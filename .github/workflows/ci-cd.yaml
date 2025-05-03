@@ -39,27 +39,27 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "Docker image pushed to ECR"
 
-          - name: Deploy to EC2 instance
-          env:
-            ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
-            ECR_REPOSITORY: iot/images
-            IMAGE_TAG: ${{ steps.docker-tag.outputs.tag }}
-          run: |
-            echo "Deploying to EC2 instance..."
-            
-            # Save SSH key to a file
-            echo "${{ secrets.SSH_KEY }}" > ssh_key.pem
-            chmod 600 ssh_key.pem
-            
-            # Use the file with SSH
-            ssh -o StrictHostKeyChecking=no -i ssh_key.pem ubuntu@${{ secrets.SERVER_HOST }} << EOF
-                docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-                docker stop iot-server || true
-                docker rm iot-server || true
-                docker run -d --name iot-server -e MQTT_USERNAME=${{ secrets.MQTT_USERNAME }} -e MQTT_PASSWORD=${{ secrets.MQTT_PASSWORD }} -p 80:8090 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-            EOF
-            
-            # Clean up
-            rm -f ssh_key.pem
-            
-            echo "Deployment completed"
+      - name: Deploy to EC2 instance
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: iot/images
+          IMAGE_TAG: ${{ steps.docker-tag.outputs.tag }}
+        run: |
+          echo "Deploying to EC2 instance..."
+
+          # Save SSH key to a file
+          echo "${{ secrets.SSH_KEY }}" > ssh_key.pem
+          chmod 600 ssh_key.pem
+
+          # Use the file with SSH
+          ssh -o StrictHostKeyChecking=no -i ssh_key.pem ubuntu@${{ secrets.SERVER_HOST }} << EOF
+              docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+              docker stop iot-server || true
+              docker rm iot-server || true
+              docker run -d --name iot-server -e MQTT_USERNAME=${{ secrets.MQTT_USERNAME }} -e MQTT_PASSWORD=${{ secrets.MQTT_PASSWORD }} -p 80:8090 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          EOF
+
+          # Clean up
+          rm -f ssh_key.pem
+
+          echo "Deployment completed"
