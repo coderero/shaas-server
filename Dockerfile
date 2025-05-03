@@ -1,33 +1,41 @@
-FROM golang:1.23.5-alpine AS builder
+# === Build Stage ===
+FROM golang:1.24.2-alpine AS builder
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the go.mod and go.sum files
+# Copy go module files first to leverage Docker caching
 COPY go.mod go.sum ./
-
-# Download the dependencies
 RUN go mod download
 
-# Copy the source code
+# Copy the entire source code
 COPY . .
 
-RUN apk add --no-cache make
+# Install build tools
+RUN apk update && apk add --no-cache make
 
-# Build the application
+# Build the application using Makefile
 RUN make
 
-# Final stage
-FROM alpine:latest
 
-# Set the working directory
+# === Runtime Stage ===
+FROM alpine:3.19
+
+# Working directory inside the container
 WORKDIR /app
 
-# Copy the binary from the builder stage
+# Copy the compiled binary
 COPY --from=builder /app/bin/iot-server ./iot-server
-COPY --from=builder /app/config /app/config
 
+# Set executable permissions (optional but safe)
+RUN chmod +x ./iot-server
+
+# Expose the default HTTP port
 EXPOSE 8090
 
-# Run the application
-CMD ["./iot-server","--http", "0.0.0.0:8090"]
+# Define environment variables (for local dev defaults, can be overridden)
+ENV MQTT_USERNAME=defaultuser
+ENV MQTT_PASSWORD=defaultpass
+
+# Start the server
+CMD ["./iot-server", "serve"]

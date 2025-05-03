@@ -29,10 +29,6 @@ func NewMQTT(port int, collections []collections.CollectionDefiner, app core.App
 		})),
 	})
 
-	fmt.Println("MQTT server started on port", port)
-	// Print the mqtt username and password
-	fmt.Println("MQTT username:", os.Getenv("MQTT_USERNAME"))
-	fmt.Println("MQTT password:", os.Getenv("MQTT_PASSWORD"))
 	err := server.AddHook(new(auth.Hook), &auth.Options{
 		Ledger: &auth.Ledger{
 			Auth: auth.AuthRules{
