@@ -53,6 +53,7 @@ jobs:
 
           # Use the file with SSH
           ssh -o StrictHostKeyChecking=no -i ssh_key.pem ubuntu@${{ secrets.SERVER_HOST }} << EOF
+              newgrp docker
               docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
               docker stop iot-server || true
               docker rm iot-server || true
