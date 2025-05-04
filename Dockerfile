@@ -19,7 +19,7 @@ RUN make
 
 
 # === Runtime Stage ===
-FROM alpine:3.19
+FROM alpine:3.21.3
 
 # Working directory inside the container
 WORKDIR /app
@@ -30,12 +30,9 @@ COPY --from=builder /app/bin/iot-server ./iot-server
 # Set executable permissions (optional but safe)
 RUN chmod +x ./iot-server
 
-# Expose the default HTTP port
+# Expose the default HTTP port and MQTT port
 EXPOSE 8090
-
-# Define environment variables (for local dev defaults, can be overridden)
-ENV MQTT_USERNAME=defaultuser
-ENV MQTT_PASSWORD=defaultpass
+EXPOSE 1883
 
 # Start the server
-CMD ["./iot-server", "serve"]
+CMD ["./iot-server", "serve", "--http=0.0.0.0:8090"]
