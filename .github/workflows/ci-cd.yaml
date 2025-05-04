@@ -82,6 +82,7 @@ jobs:
               -e ADMIN_PASSWORD='${{ secrets.ADMIN_PASSWORD }}' \
               -p 8090:8090 \
               -p 8883:1883 \
+              -v ~/pb_data:./pb_data \
               ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
           EOF
 
