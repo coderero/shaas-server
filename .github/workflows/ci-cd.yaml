@@ -65,7 +65,10 @@ jobs:
             docker run -d --name iot-server \
               -e MQTT_USERNAME='${{ secrets.MQTT_USERNAME }}' \
               -e MQTT_PASSWORD='${{ secrets.MQTT_PASSWORD }}' \
+              -e ADMIN_EMAIL='${{ secrets.ADMIN_EMAIL }}' \
+              -e ADMIN_PASSWORD='${{ secrets.ADMIN_PASSWORD }}' \
               -p 8080:8090 \
+              -p 1883:1883 \
               $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           EOF
 
