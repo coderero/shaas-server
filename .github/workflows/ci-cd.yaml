@@ -82,8 +82,7 @@ jobs:
               -e ADMIN_PASSWORD='${{ secrets.ADMIN_PASSWORD }}' \
               -p 8090:8090 \
               -p 1883:1883 \
-              ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} \
-              serve --http="0.0.0.0:8090"
+              ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
           EOF
 
           # Clean up
